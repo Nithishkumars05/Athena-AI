@@ -1,3 +1,4 @@
+from agents.document_agent import summarize_document
 from agents.chat_agent import chat
 from agents.report_agent import create_report
 
@@ -43,6 +44,21 @@ Include:
         print(f"\nAthena : Report generated successfully !!")
         print(f"Saved as : {filename}")
         print("-"*60)
+    elif user.lower() == "summarize document":
+
+        file_path = input("Enter document path: ")
+
+        try:
+            print("\nAthena: Reading document...\n")
+
+            summary = summarize_document(name, file_path)
+
+            print("\nAthena:")
+            print(summary)
+            print("-" * 60)
+
+        except Exception as e:
+            print(f"\nError: {e}")
     else:
         answer=chat(name,user)
         print("\nAthena :",answer)
