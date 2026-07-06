@@ -1,7 +1,7 @@
 from agents.document_agent import summarize_document
 from agents.chat_agent import chat
 from agents.report_agent import create_report
-
+from formatter.math_formatter import format_math
 
 # ---------------------------
 # ATHENA UI HEADER
@@ -69,6 +69,7 @@ Include:
 """
 
     report = chat(name, prompt)
+    report = format_math(report)
     filename = create_report(topic, report)
 
     print("\nAthena: Report generated successfully!!")
@@ -83,7 +84,7 @@ def summarize_flow(name):
         print("\nAthena: Reading document...\n")
 
         summary = summarize_document(name, file_path)
-
+        summary = format_math(summary)
         print("\nAthena Summary:\n")
         print(summary)
         print("-" * 60)
@@ -107,6 +108,7 @@ while True:
     if cmd == "chat" or cmd is None:
         # If user didn't type a command → treat as chat
         answer = chat(name, user_input)
+        answer = format_math(answer)
         print("\nAthena:", answer)
         print("-" * 60)
 
