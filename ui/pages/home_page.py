@@ -1,41 +1,50 @@
-from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QGridLayout
+from PySide6.QtCore import Qt, Signal
+
+from ui.widgets.feature_card import FeatureCard
 
 
 class HomePage(QWidget):
 
+    navigate = Signal(str)
+
     def __init__(self):
         super().__init__()
 
-        layout = QVBoxLayout()
+        main_layout = QVBoxLayout()
 
-        greeting = QLabel("Good Afternoon!")
-        greeting.setAlignment(Qt.AlignCenter)
-
-        title = QLabel("Welcome to Athena AI")
+        title = QLabel("Good Afternoon, Nithish")
         title.setAlignment(Qt.AlignCenter)
+        title.setStyleSheet("font-size:22px; font-weight:bold;")
 
-        subtitle = QLabel(
-            "Your Intelligent Engineering Workspace"
-        )
+        subtitle = QLabel("Welcome to Athena AI - Your Engineering Workspace")
         subtitle.setAlignment(Qt.AlignCenter)
+        subtitle.setStyleSheet("font-size:14px; color:#6B7280;")
 
-        greeting.setStyleSheet(
-            "font-size:20px; color:#6B7280;"
-        )
+        main_layout.addWidget(title)
+        main_layout.addWidget(subtitle)
 
-        title.setStyleSheet(
-            "font-size:36px; font-weight:bold;"
-        )
+        grid = QGridLayout()
 
-        subtitle.setStyleSheet(
-            "font-size:18px; color:#6B7280;"
-        )
+        cards = [
+            FeatureCard("💬", "Assistant", "Talk with Athena", "assistant"),
+            FeatureCard("🧮", "Mathematics", "Solve equations instantly", "math"),
+            FeatureCard("📄", "Reports", "Generate professional reports", "report"),
+            FeatureCard("📚", "Documents", "Summarize PDFs & files", "documents"),
+        ]
 
-        layout.addStretch()
-        layout.addWidget(greeting)
-        layout.addWidget(title)
-        layout.addWidget(subtitle)
-        layout.addStretch()
+        positions = [(0,0), (0,1), (1,0), (1,1)]
 
-        self.setLayout(layout)
+        for card, pos in zip(cards, positions):
+            card.clicked.connect(self.navigate.emit)
+            grid.addWidget(card, pos[0], pos[1])
+
+        main_layout.addLayout(grid)
+
+        footer = QLabel("Athena AI v5.0 • Offline Ready")
+        footer.setAlignment(Qt.AlignCenter)
+        footer.setStyleSheet("color:#9CA3AF; font-size:12px;")
+
+        main_layout.addWidget(footer)
+
+        self.setLayout(main_layout)

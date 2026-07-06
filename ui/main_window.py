@@ -93,14 +93,23 @@ class MainWindow(QMainWindow):
 
         # Pages
         self.pages = QStackedWidget()
-
-        self.pages.addWidget(HomePage())
+        self.page_map = {
+    "home": 0,
+    "assistant": 1,
+    "math": 2,
+    "report": 3,
+    "documents": 4,
+    "settings": 5,
+}
+        self.home_page = HomePage()
+        self.pages.addWidget(self.home_page)
+        self.home_page.navigate.connect(self.switch_page)
         self.pages.addWidget(AssistantPage())
         self.pages.addWidget(MathPage())
         self.pages.addWidget(ReportPage())
         self.pages.addWidget(DocumentPage())
         self.pages.addWidget(SettingsPage())
-
+       
         content_layout.addWidget(self.sidebar)
         content_layout.addWidget(self.pages)
 
@@ -119,4 +128,7 @@ class MainWindow(QMainWindow):
         )
 
         self.sidebar.setCurrentRow(0)
+    def switch_page(self, page_key):
 
+        index = self.page_map.get(page_key, 0)
+        self.pages.setCurrentIndex(index)
