@@ -1,13 +1,24 @@
 from agents.document_agent import summarize_document
 from agents.chat_agent import chat
 from agents.report_agent import create_report
+from agents.intent_router import router
+from agents.math_agent import (
+    solve_equation,
+    simplify_expression,
+    differentiate_expression,
+    integrate_expression,
+    factor_expression,
+    expand_expression,
+)
 from formatter.math_formatter import format_math
 
-# ---------------------------
-# ATHENA UI HEADER
-# ---------------------------
+
+# ==========================================================
+# ATHENA AI v4.1
+# ==========================================================
+
 print("=" * 60)
-print("               ATHENA AI v4.0")
+print("               ATHENA AI v4.1")
 print("=" * 60)
 
 name = input("Enter your name: ").strip()
@@ -15,15 +26,16 @@ name = input("Enter your name: ").strip()
 print(f"\nWelcome {name}!\n")
 
 
-# ---------------------------
-# COMMAND SYSTEM
-# ---------------------------
+# ==========================================================
+# COMMANDS
+# ==========================================================
+
 COMMANDS = {
     "chat": ["chat", "c"],
     "report": ["report", "r"],
     "summarize": ["summarize", "s", "sum"],
     "help": ["help", "h"],
-    "exit": ["exit", "q", "quit"]
+    "exit": ["exit", "q", "quit"],
 }
 
 
@@ -37,22 +49,60 @@ def normalize_command(user_input):
     return None
 
 
+# ==========================================================
+# OUTPUT
+# ==========================================================
+
+def athena_print(text):
+    text = format_math(str(text))
+    print(f"\nAthena: {text}")
+    print("-" * 60)
+
+
+# ==========================================================
+# HELP
+# ==========================================================
+
 def show_help():
     print("""
-================ HELP MENU ================
-chat (c)        → Talk with Athena
-report (r)      → Generate AI report
-summarize (s)   → Summarize a document
-help (h)        → Show this menu
-exit (q)        → Quit Athena
-==========================================
+================= ATHENA HELP =================
+
+chat (c)
+    Talk with Athena
+
+report (r)
+    Generate a report
+
+summarize (s)
+    Summarize a document
+
+Math Examples:
+    solve x**2 + 5*x + 6
+    simplify (x**2-1)/(x-1)
+    differentiate x**3 + 4*x
+    integrate x**2
+    factor x**2+5*x+6
+    expand (x+2)**3
+
+help (h)
+    Show help
+
+exit (q)
+    Quit Athena
+
+===============================================
 """)
 
 
+# ==========================================================
+# REPORT
+# ==========================================================
+
 def generate_report_flow(name):
+
     topic = input("\nEnter report topic: ").strip()
 
-    print("\nAthena: Generating report...\n")
+    athena_print("Generating report...")
 
     prompt = f"""
 Write a detailed report on:
@@ -70,47 +120,103 @@ Include:
 
     report = chat(name, prompt)
     report = format_math(report)
+
     filename = create_report(topic, report)
 
-    print("\nAthena: Report generated successfully!!")
-    print(f"Saved as: {filename}")
+    athena_print("Report generated successfully.")
+    print("Saved as:", filename)
     print("-" * 60)
 
 
+# ==========================================================
+# SUMMARIZER
+# ==========================================================
+
 def summarize_flow(name):
+
     file_path = input("\nEnter document path: ").strip().strip('"')
 
     try:
-        print("\nAthena: Reading document...\n")
+
+        athena_print("Reading document...")
 
         summary = summarize_document(name, file_path)
-        summary = format_math(summary)
+
         print("\nAthena Summary:\n")
-        print(summary)
+        print(format_math(summary))
         print("-" * 60)
 
     except Exception as e:
+
         if "429" in str(e):
-            print("\nAthena: API quota exceeded. Please wait or try again later.")
+            athena_print("API quota exceeded. Please try again later.")
+
         else:
-            print(f"\nError: {e}")
+            athena_print(e)
 
 
-# ---------------------------
+# ==========================================================
+# MATH AGENT
+# ==========================================================
+
+def math_flow(user_input):
+
+    text = user_input.lower()
+
+    try:
+
+        if text.startswith("solve"):
+            expression = user_input[5:].strip()
+            return solve_equation(expression)
+
+        elif text.startswith("simplify"):
+            expression = user_input[8:].strip()
+            return simplify_expression(expression)
+
+        elif text.startswith("differentiate"):
+            expression = user_input[13:].strip()
+            return differentiate_expression(expression)
+
+        elif text.startswith("integrate"):
+            expression = user_input[9:].strip()
+            return integrate_expression(expression)
+
+        elif text.startswith("factor"):
+            expression = user_input[6:].strip()
+            return factor_expression(expression)
+
+        elif text.startswith("expand"):
+            expression = user_input[6:].strip()
+            return expand_expression(expression)
+
+        return "Unknown mathematical command."
+
+    except Exception as e:
+        return f"Math Error: {e}"
+
+
+# ==========================================================
 # MAIN LOOP
-# ---------------------------
+# ==========================================================
+
 while True:
+
     user_input = input(f"{name}: ").strip()
 
-    cmd = normalize_command(user_input)
+    if not user_input:
+        continue
 
-    # ---------------- CHAT ----------------
-    if cmd == "chat" or cmd is None:
-        # If user didn't type a command → treat as chat
-        answer = chat(name, user_input)
-        answer = format_math(answer)
-        print("\nAthena:", answer)
-        print("-" * 60)
+    cmd = normalize_command(user_input)
+    intent = router.detect(user_input)
+
+    # ---------------- EXIT ----------------
+    if cmd == "exit":
+        athena_print("Goodbye! Have a wonderful day 👋")
+        break
+
+    # ---------------- HELP ----------------
+    elif cmd == "help":
+        show_help()
 
     # ---------------- REPORT ----------------
     elif cmd == "report":
@@ -120,14 +226,20 @@ while True:
     elif cmd == "summarize":
         summarize_flow(name)
 
-    # ---------------- HELP ----------------
-    elif cmd == "help":
-        show_help()
+    # ---------------- MATH ----------------
+    elif intent == "math":
+        result = math_flow(user_input)
+        athena_print(result)
 
-    # ---------------- EXIT ----------------
-    elif cmd == "exit":
-        print("\nAthena: Goodbye! Have a wonderful day 👋")
-        break
-
+    # ---------------- CHAT ----------------
     else:
-        print("\nAthena: Invalid command. Type 'help' for options.")
+        try:
+            answer = chat(name, user_input)
+            athena_print(answer)
+
+        except Exception as e:
+
+            if "429" in str(e):
+                athena_print("API quota exceeded. Chat is temporarily unavailable.")
+            else:
+                athena_print(e)
