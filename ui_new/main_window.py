@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
 
 from ui_new.widgets.sidebar import Sidebar
 from ui_new.pages.dashboard import DashboardPage
-
+from ui_new.pages.chat import ChatPage
 
 class MainWindow(QMainWindow):
 
@@ -32,8 +32,10 @@ class MainWindow(QMainWindow):
         self.pages = QStackedWidget()
 
         self.dashboard = DashboardPage()
-
         self.pages.addWidget(self.dashboard)
+        self.chat = ChatPage()
+        self.pages.addWidget(self.chat)
+        
 
         layout.addWidget(self.pages)
 
