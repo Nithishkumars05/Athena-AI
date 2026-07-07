@@ -1,23 +1,13 @@
 """
 Athena AI - Dispatcher
-
-Acts as the central coordinator.
-
-Flow:
-User
- ↓
-Dispatcher
- ↓
-Intent Router
- ↓
-Selected Agent
 """
 
 from agents.intent_router import router
-from agents.chat_agent import chat
-from agents.math_agent import solve_equation
-from agents.report_agent import create_report
-from agents.document_agent import summarize_document
+
+from agents.chat_agent import handle as chat_handle
+from agents.math_agent import handle as math_handle
+from agents.report_agent import handle as report_handle
+from agents.document_agent import handle as document_handle
 
 
 class Dispatcher:
@@ -27,16 +17,16 @@ class Dispatcher:
         intent = router.detect(message)
 
         if intent == "math":
-            return solve_equation(message)
+            return math_handle(user_name, message)
 
         elif intent == "report":
-            return create_report(message)
+            return report_handle(user_name, message)
 
         elif intent == "document":
-            return summarize_document(message)
+            return document_handle(user_name, message)
 
         else:
-            return chat(user_name, message)
+            return chat_handle(user_name, message)
 
 
 dispatcher = Dispatcher()

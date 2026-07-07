@@ -50,3 +50,10 @@ Document:
 """
 
     return chat(user_name, prompt)
+
+def handle(user_name: str, message: str) -> str:
+    return (
+        "📄 Please select a PDF, DOCX, or TXT file.\n\n"
+        "Document summarization through the UI will be added "
+        "in the File Intelligence milestone."
+    )

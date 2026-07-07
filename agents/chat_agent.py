@@ -38,3 +38,5 @@ def chat(user_name: str, message: str) -> str:
         user_name=user_name,
         message=message
     )
+def handle(user_name: str, message: str) -> str:
+    return chat(user_name, message)
