@@ -7,9 +7,9 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QLabel
 )
-
+from ui_new.widgets.chat_bubble import ChatBubble
 from services.chat_service import chat_service
-
+from ui_new.widgets.chat_header import ChatHeader
 
 class ChatPage(QWidget):
 
@@ -17,7 +17,8 @@ class ChatPage(QWidget):
         super().__init__()
 
         self.layout = QVBoxLayout(self)
-
+        self.header = ChatHeader()
+        self.layout.addWidget(self.header)
         # =========================
         # Chat display area
         # =========================
@@ -57,35 +58,16 @@ class ChatPage(QWidget):
     # =========================
     def add_message(self, text, is_user=True):
 
-        label = QLabel(text)
-        label.setWordWrap(True)
-
-        if is_user:
-            label.setStyleSheet("""
-                background-color: #2b6fff;
-                color: white;
-                padding: 10px;
-                border-radius: 10px;
-                margin: 5px;
-            """)
-        else:
-            label.setStyleSheet("""
-                background-color: #2e2e2e;
-                color: white;
-                padding: 10px;
-                border-radius: 10px;
-                margin: 5px;
-            """)
+        bubble = ChatBubble(text, is_user)
 
         self.chat_layout.insertWidget(
             self.chat_layout.count() - 1,
-            label
-        )
+            bubble
+    )
 
-        # auto scroll
         self.scroll.verticalScrollBar().setValue(
             self.scroll.verticalScrollBar().maximum()
-        )
+    )
 
     # =========================
     # Async send flow
