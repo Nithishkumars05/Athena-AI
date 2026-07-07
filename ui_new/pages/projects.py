@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout
 from ui_new.widgets.ai_conversation import AIConversationWidget
 
 
-class MathPage(QWidget):
+class ProjectsPage(QWidget):
 
     def __init__(self):
         super().__init__()
@@ -12,5 +12,5 @@ class MathPage(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
 
         layout.addWidget(
-            AIConversationWidget(mode="math")
+            AIConversationWidget(mode="project")
         )

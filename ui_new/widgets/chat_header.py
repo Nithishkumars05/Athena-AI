@@ -1,5 +1,4 @@
 from PySide6.QtWidgets import (
-    QWidget,
     QLabel,
     QHBoxLayout,
     QVBoxLayout,
@@ -10,7 +9,11 @@ from PySide6.QtCore import Qt
 
 class ChatHeader(QFrame):
 
-    def __init__(self):
+    def __init__(
+        self,
+        title="🦉 Athena AI",
+        subtitle="Your Personal AI Engineer"
+    ):
         super().__init__()
 
         self.setFixedHeight(80)
@@ -42,23 +45,44 @@ class ChatHeader(QFrame):
         layout = QHBoxLayout(self)
         layout.setContentsMargins(20, 10, 20, 10)
 
-        # Left side
+        # ==========================
+        # Left
+        # ==========================
+
         left = QVBoxLayout()
 
-        title = QLabel("🦉 Athena AI")
-        title.setObjectName("title")
+        self.title = QLabel(title)
+        self.title.setObjectName("title")
 
-        subtitle = QLabel("Your Personal AI Engineer")
-        subtitle.setObjectName("subtitle")
+        self.subtitle = QLabel(subtitle)
+        self.subtitle.setObjectName("subtitle")
 
-        left.addWidget(title)
-        left.addWidget(subtitle)
+        left.addWidget(self.title)
+        left.addWidget(self.subtitle)
 
-        # Right side
-        status = QLabel("● Online")
-        status.setObjectName("status")
-        status.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        # ==========================
+        # Right
+        # ==========================
+
+        self.status = QLabel("● Online")
+        self.status.setObjectName("status")
+        self.status.setAlignment(
+            Qt.AlignRight | Qt.AlignVCenter
+        )
 
         layout.addLayout(left)
         layout.addStretch()
-        layout.addWidget(status)
+        layout.addWidget(self.status)
+
+    # =====================================
+    # Public API
+    # =====================================
+
+    def set_title(self, text: str):
+        self.title.setText(text)
+
+    def set_subtitle(self, text: str):
+        self.subtitle.setText(text)
+
+    def set_status(self, text: str):
+        self.status.setText(text)

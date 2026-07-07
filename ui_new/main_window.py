@@ -11,6 +11,11 @@ from ui_new.widgets.sidebar import Sidebar
 
 from ui_new.pages.dashboard import DashboardPage
 from ui_new.pages.chat import ChatPage
+from ui_new.pages.chat import ChatPage
+from ui_new.pages.math import MathPage
+from ui_new.pages.reports import ReportsPage
+from ui_new.pages.documents import DocumentsPage
+from ui_new.pages.projects import ProjectsPage
 from ui_new.pages.settings import SettingsPage
 
 
@@ -58,10 +63,10 @@ class MainWindow(QMainWindow):
         self.dashboard = DashboardPage()
         self.chat = ChatPage()
 
-        self.math = PlaceholderPage("🧮 Mathematics")
-        self.reports = PlaceholderPage("📄 Reports")
-        self.documents = PlaceholderPage("📚 Documents")
-        self.projects = PlaceholderPage("📁 Projects")
+        self.math = MathPage()
+        self.reports = ReportsPage()
+        self.documents = DocumentsPage()
+        self.projects = ProjectsPage()
 
         self.settings = SettingsPage()
 
