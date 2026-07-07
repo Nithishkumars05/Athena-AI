@@ -18,7 +18,7 @@ ModelManager
 Gemini / OpenAI / Ollama
 """
 
-from services.models.model_manager import model_manager
+from core.model_manager import model_manager
 
 
 def chat(user_name: str, message: str) -> str:

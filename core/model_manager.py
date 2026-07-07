@@ -1,4 +1,11 @@
-from services.models.gemini_model import GeminiModel
+"""
+Athena AI Core - Model Manager
+
+Responsible for selecting and managing
+the active AI model.
+"""
+
+from models.gemini_model import GeminiModel
 
 
 class ModelManager:
@@ -19,7 +26,7 @@ class ModelManager:
     def get_current_model(self):
         return self.current_model
 
-    def generate(self, user_name: str, message: str):
+    def generate(self, user_name: str, message: str) -> str:
         return self.models[self.current_model].generate(
             user_name,
             message

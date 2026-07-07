@@ -1,4 +1,4 @@
-from services.models.base_model import BaseModel
+from models.base_model import BaseModel
 from app.config import client
 from app.memory import add_message, get_history
 
