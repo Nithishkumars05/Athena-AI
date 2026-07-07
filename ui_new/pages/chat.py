@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QLabel
 )
 
-from services.chat_service import send_message
+from services.chat_service import chat_service
 
 
 class ChatPage(QWidget):
@@ -53,7 +53,7 @@ class ChatPage(QWidget):
         self.input_box.returnPressed.connect(self.send)
 
     # =========================
-    # Message UI
+    # Message rendering
     # =========================
     def add_message(self, text, is_user=True):
 
@@ -77,19 +77,18 @@ class ChatPage(QWidget):
                 margin: 5px;
             """)
 
-        # insert above stretch
         self.chat_layout.insertWidget(
             self.chat_layout.count() - 1,
             label
         )
 
-        # auto scroll to bottom
+        # auto scroll
         self.scroll.verticalScrollBar().setValue(
             self.scroll.verticalScrollBar().maximum()
         )
 
     # =========================
-    # Send message flow
+    # Async send flow
     # =========================
     def send(self):
         message = self.input_box.text().strip()
@@ -100,8 +99,27 @@ class ChatPage(QWidget):
         self.add_message(message, True)
         self.input_box.clear()
 
-        # get response from service layer
-        response = send_message(message)
+        # show temporary thinking message
+        thinking_label = QLabel("Athena is thinking...")
+        thinking_label.setStyleSheet("""
+            background-color: #444;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px;
+        """)
 
-        # show AI response
-        self.add_message(response, False)
+        self.chat_layout.insertWidget(
+            self.chat_layout.count() - 1,
+            thinking_label
+        )
+
+        # callbacks
+        def on_response(response):
+            thinking_label.setText(response)
+
+        def on_error(error):
+            thinking_label.setText(f"Error: {error}")
+
+        # async call via service layer
+        chat_service.send_message(message, on_response, on_error)
