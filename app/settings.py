@@ -3,7 +3,7 @@ class Settings:
     def __init__(self):
 
         # AI configuration
-        self.model = "gemini"
+        self.model = "gemini-2.5-flash"
         self.temperature = 0.7
 
         # Conversation memory

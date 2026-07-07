@@ -1,5 +1,5 @@
 from PySide6.QtCore import QRunnable, Slot, Signal, QObject
-from agents.chat_agent import chat
+from agents.dispatcher import dispatcher
 import traceback
 
 
@@ -18,7 +18,10 @@ class ChatWorker(QRunnable):
     @Slot()
     def run(self):
         try:
-            response = chat("User", self.message)
+            response = dispatcher.handle(
+                "User",
+                self.message
+            )
             self.signals.finished.emit(response)
 
         except Exception:

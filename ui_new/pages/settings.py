@@ -82,7 +82,7 @@ class SettingsPage(QWidget):
 
         self.model_box.addItems(
             [
-                "gemini"
+                "gemini-2.5-flash"
             ]
         )
 
