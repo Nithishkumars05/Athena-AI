@@ -4,48 +4,60 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QHBoxLayout,
-    QScrollArea,
-    QLabel
+    QScrollArea
 )
+from PySide6.QtCore import Qt
+
 from ui_new.widgets.chat_bubble import ChatBubble
-from services.chat_service import chat_service
 from ui_new.widgets.chat_header import ChatHeader
+from services.chat_service import chat_service
+
 
 class ChatPage(QWidget):
 
     def __init__(self):
         super().__init__()
 
+        self.current_ai_bubble = None
+
         self.layout = QVBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+
+        # =========================
+        # Header
+        # =========================
         self.header = ChatHeader()
         self.layout.addWidget(self.header)
+
         # =========================
-        # Chat display area
+        # Chat Area
         # =========================
-        self.chat_area_widget = QWidget()
-        self.chat_layout = QVBoxLayout(self.chat_area_widget)
+        self.chat_widget = QWidget()
+
+        self.chat_layout = QVBoxLayout(self.chat_widget)
+        self.chat_layout.setSpacing(10)
         self.chat_layout.addStretch()
 
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
-        self.scroll.setWidget(self.chat_area_widget)
+        self.scroll.setWidget(self.chat_widget)
 
         self.layout.addWidget(self.scroll)
 
         # =========================
-        # Input area
+        # Input Area
         # =========================
-        input_row = QHBoxLayout()
+        input_layout = QHBoxLayout()
 
         self.input_box = QLineEdit()
         self.input_box.setPlaceholderText("Message Athena AI...")
 
         self.send_btn = QPushButton("Send")
 
-        input_row.addWidget(self.input_box)
-        input_row.addWidget(self.send_btn)
+        input_layout.addWidget(self.input_box)
+        input_layout.addWidget(self.send_btn)
 
-        self.layout.addLayout(input_row)
+        self.layout.addLayout(input_layout)
 
         # =========================
         # Signals
@@ -53,55 +65,76 @@ class ChatPage(QWidget):
         self.send_btn.clicked.connect(self.send)
         self.input_box.returnPressed.connect(self.send)
 
-    # =========================
-    # Message rendering
-    # =========================
-    def add_message(self, text, is_user=True):
+    # ======================================================
+    # Utility
+    # ======================================================
+
+    def scroll_bottom(self):
+        self.scroll.verticalScrollBar().setValue(
+            self.scroll.verticalScrollBar().maximum()
+        )
+
+    # ======================================================
+    # Add Message
+    # ======================================================
+
+    def add_message(self, text, is_user):
 
         bubble = ChatBubble(text, is_user)
 
         self.chat_layout.insertWidget(
             self.chat_layout.count() - 1,
             bubble
-    )
+        )
 
-        self.scroll.verticalScrollBar().setValue(
-            self.scroll.verticalScrollBar().maximum()
-    )
+        self.scroll_bottom()
 
-    # =========================
-    # Async send flow
-    # =========================
+        return bubble
+
+    # ======================================================
+    # Send Message
+    # ======================================================
+
     def send(self):
+
         message = self.input_box.text().strip()
+
         if not message:
             return
 
-        # show user message
+        # User bubble
         self.add_message(message, True)
+
         self.input_box.clear()
 
-        # show temporary thinking message
-        thinking_label = QLabel("Athena is thinking...")
-        thinking_label.setStyleSheet("""
-            background-color: #444;
-            color: white;
-            padding: 10px;
-            border-radius: 10px;
-            margin: 5px;
-        """)
-
-        self.chat_layout.insertWidget(
-            self.chat_layout.count() - 1,
-            thinking_label
+        # Athena placeholder
+        self.current_ai_bubble = self.add_message(
+            "Athena is thinking...",
+            False
         )
 
-        # callbacks
-        def on_response(response):
-            thinking_label.setText(response)
+        chat_service.send_message(
+            message,
+            self.on_response,
+            self.on_error
+        )
 
-        def on_error(error):
-            thinking_label.setText(f"Error: {error}")
+    # ======================================================
+    # Callbacks
+    # ======================================================
 
-        # async call via service layer
-        chat_service.send_message(message, on_response, on_error)
+    def on_response(self, response):
+
+        if self.current_ai_bubble:
+            self.current_ai_bubble.set_text(response)
+
+        self.scroll_bottom()
+
+    def on_error(self, error):
+
+        if self.current_ai_bubble:
+            self.current_ai_bubble.set_text(
+                f"⚠️ {error}"
+            )
+
+        self.scroll_bottom()
