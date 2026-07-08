@@ -2,18 +2,29 @@ class Settings:
 
     def __init__(self):
 
-        # AI configuration
+        
+    # AI configuration
+        self.ai_mode = "auto"      # cloud | offline | auto
         self.model = "gemini-2.5-flash"
         self.temperature = 0.7
 
-        # Conversation memory
+    # Conversation memory
         self.max_history = 20
-
-
     # -------------------------
     # Model
     # -------------------------
+    # -------------------------
+# AI Mode
+# -------------------------
 
+    def get_ai_mode(self):
+
+        return self.ai_mode
+
+
+    def set_ai_mode(self, mode):
+
+        self.ai_mode = mode
     def get_model(self):
 
         return self.model
