@@ -1,24 +1,48 @@
 import os
 from dotenv import load_dotenv
-from google import genai
 
 load_dotenv()
-API_KEY=os.getenv("GEMINI_API_KEY")
 
-if not API_KEY:
-    raise ValueError("GEMINI_API_KEY not found in the .env file")
+# =====================================================
+# AI MODE
+# =====================================================
 
-client=genai.Client(api_key=API_KEY)
-# ==========================================
-# AI Configuration
-# ==========================================
+AI_MODE = os.getenv("AI_MODE", "auto")
 
-AI_MODE = "cloud"      # cloud | offline | auto
+# =====================================================
+# CLOUD
+# =====================================================
 
-GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
-OLLAMA_CHAT_MODEL = "qwen3:8b"
+# =====================================================
+# OLLAMA
+# =====================================================
 
-OLLAMA_CODE_MODEL = "qwen2.5-coder:7b"
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 
-OLLAMA_URL = "http://localhost:11434"
+OLLAMA_CHAT_MODEL = os.getenv(
+    "OLLAMA_CHAT_MODEL",
+    "qwen3:8b"
+)
+
+OLLAMA_CODE_MODEL = os.getenv(
+    "OLLAMA_CODE_MODEL",
+    "qwen2.5-coder:7b"
+)
+
+OLLAMA_REASONING_MODEL = os.getenv(
+    "OLLAMA_REASONING_MODEL",
+    "qwen3:14b"
+)
+
+OLLAMA_VISION_MODEL = os.getenv(
+    "OLLAMA_VISION_MODEL",
+    "llava:latest"
+)
+
+OLLAMA_EMBED_MODEL = os.getenv(
+    "OLLAMA_EMBED_MODEL",
+    "nomic-embed-text:latest"
+)
