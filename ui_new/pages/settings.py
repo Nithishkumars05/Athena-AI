@@ -16,7 +16,6 @@ from PySide6.QtCore import Qt
 from app.settings import settings
 
 
-
 class SettingsPage(QWidget):
 
     def __init__(self):
@@ -24,10 +23,7 @@ class SettingsPage(QWidget):
         super().__init__()
 
         self.create_ui()
-
         self.load_settings()
-
-
 
     def create_ui(self):
 
@@ -42,13 +38,11 @@ class SettingsPage(QWidget):
 
         layout.setSpacing(20)
 
-
-
+        # -------------------------
         # Title
+        # -------------------------
 
-        title = QLabel(
-            "⚙ Settings"
-        )
+        title = QLabel("⚙ Settings")
 
         title.setStyleSheet("""
             font-size:28px;
@@ -57,16 +51,16 @@ class SettingsPage(QWidget):
 
         layout.addWidget(title)
 
+        # -------------------------
+        # AI Settings Group
+        # -------------------------
 
-
-        # AI Group
-
-        ai_group = QGroupBox(
-            "AI Settings"
-        )
-
+        ai_group = QGroupBox("AI Settings")
         ai_layout = QVBoxLayout()
+
+        # -------------------------
         # AI Mode
+        # -------------------------
 
         mode_row = QHBoxLayout()
 
@@ -84,6 +78,10 @@ class SettingsPage(QWidget):
             ]
         )
 
+        self.mode_box.currentTextChanged.connect(
+            self.update_models
+        )
+
         mode_row.addWidget(
             self.mode_box
         )
@@ -92,8 +90,9 @@ class SettingsPage(QWidget):
             mode_row
         )
 
-
+        # -------------------------
         # Model
+        # -------------------------
 
         model_row = QHBoxLayout()
 
@@ -101,18 +100,7 @@ class SettingsPage(QWidget):
             QLabel("Model")
         )
 
-
         self.model_box = QComboBox()
-
-        self.model_box.addItems(
-            [
-                "gemini-2.5-flash",
-                "qwen3:8b",
-                "qwen2.5-coder:7b",
-                "qwen3:14b"
-            ]
-        )
-
 
         model_row.addWidget(
             self.model_box
@@ -122,16 +110,15 @@ class SettingsPage(QWidget):
             model_row
         )
 
-
-
+        # -------------------------
         # Temperature
+        # -------------------------
 
         temp_row = QHBoxLayout()
 
         temp_row.addWidget(
             QLabel("Temperature")
         )
-
 
         self.temp_slider = QSlider(
             Qt.Horizontal
@@ -142,27 +129,23 @@ class SettingsPage(QWidget):
             100
         )
 
-
         temp_row.addWidget(
             self.temp_slider
         )
-
 
         ai_layout.addLayout(
             temp_row
         )
 
-
-
+        # -------------------------
         # History
+        # -------------------------
 
         history_row = QHBoxLayout()
-
 
         history_row.addWidget(
             QLabel("Max History")
         )
-
 
         self.history_box = QSpinBox()
 
@@ -171,48 +154,89 @@ class SettingsPage(QWidget):
             100
         )
 
-
         history_row.addWidget(
             self.history_box
         )
-
 
         ai_layout.addLayout(
             history_row
         )
 
-
         ai_group.setLayout(
             ai_layout
         )
-
 
         layout.addWidget(
             ai_group
         )
 
-
-
-        # Save button
+        # -------------------------
+        # Save Button
+        # -------------------------
 
         self.save_button = QPushButton(
             "Save Settings"
         )
 
-
         self.save_button.clicked.connect(
             self.save_settings
         )
-
 
         layout.addWidget(
             self.save_button
         )
 
-
         layout.addStretch()
 
+    # =====================================================
+    # Update Available Models
+    # =====================================================
 
+    def update_models(self):
+
+        current_model = settings.get_model()
+
+        mode = self.mode_box.currentText()
+
+        self.model_box.blockSignals(True)
+        self.model_box.clear()
+
+        if mode == "cloud":
+
+            self.model_box.addItems(
+                [
+                    "gemini-2.5-flash"
+                ]
+            )
+
+        elif mode == "offline":
+
+            self.model_box.addItems(
+                [
+                    "qwen3:8b",
+                    "qwen2.5-coder:7b",
+                    "qwen3:14b"
+                ]
+            )
+
+        else:
+
+            self.model_box.addItems(
+                [
+                    "Auto Select"
+                ]
+            )
+
+        index = self.model_box.findText(current_model)
+
+        if index >= 0:
+            self.model_box.setCurrentIndex(index)
+
+        self.model_box.blockSignals(False)
+
+    # =====================================================
+    # Load Settings
+    # =====================================================
 
     def load_settings(self):
 
@@ -220,14 +244,15 @@ class SettingsPage(QWidget):
             settings.get_ai_mode()
         )
 
+        self.update_models()
+
         self.model_box.setCurrentText(
             settings.get_model()
         )
 
         self.temp_slider.setValue(
             int(
-                settings.get_temperature()
-            *   100
+                settings.get_temperature() * 100
             )
         )
 
@@ -235,6 +260,9 @@ class SettingsPage(QWidget):
             settings.get_history()
         )
 
+    # =====================================================
+    # Save Settings
+    # =====================================================
 
     def save_settings(self):
 
@@ -242,9 +270,11 @@ class SettingsPage(QWidget):
             self.mode_box.currentText()
         )
 
-        settings.set_model(
-            self.model_box.currentText()
-        )
+        if self.mode_box.currentText() != "auto":
+
+            settings.set_model(
+                self.model_box.currentText()
+            )
 
         settings.set_temperature(
             self.temp_slider.value() / 100
@@ -257,7 +287,7 @@ class SettingsPage(QWidget):
         QMessageBox.information(
             self,
             "Athena AI",
-            "Settings saved"
+            "Settings saved successfully!"
         )
 
         print("Settings Updated")
