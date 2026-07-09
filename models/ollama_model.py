@@ -1,4 +1,5 @@
 from models.base_model import BaseModel
+from services.conversation_service import conversation_service
 import ollama
 
 
@@ -11,15 +12,15 @@ class OllamaModel(BaseModel):
     def generate(self, user_name, message):
         try:
 
-            prompt = f"""
-You are Athena AI.
+            conversation_service.save_user_message(
+    user_name,
+    message
+)
 
-User: {user_name}
-
-Message:
-{message}
-"""
-
+            prompt = conversation_service.build_prompt(
+        user_name,
+        message
+)
             response = ollama.chat(
                 model=self.model_name,
                 messages=[
@@ -30,7 +31,14 @@ Message:
                 ]
             )
 
-            return response["message"]["content"]
+            answer = response["message"]["content"]
+
+            conversation_service.save_ai_message(
+    user_name,
+            answer
+)
+
+            return answer
 
 
         except Exception as e:

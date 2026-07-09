@@ -2,60 +2,25 @@ from models.base_model import BaseModel
 
 from app.config import client
 from app.settings import settings
-from app.memory import add_message, get_history
-
+from services.conversation_service import conversation_service
 
 class GeminiModel(BaseModel):
-
-    def format_history(self, history):
-
-        return "\n".join(
-            f"{msg['role']}: {msg['content']}"
-            for msg in history
-        )
 
 
     def generate(self, user_name: str, message: str) -> str:
 
         # Save user message
-        add_message(
-            user_name,
-            "User",
-            message
-        )
+        conversation_service.save_user_message(
+        user_name,
+        message
+    )
 
 
         # Load system prompt
-        with open(
-            "prompts/system_prompt.txt",
-            "r",
-            encoding="utf-8"
-        ) as f:
-
-            system_prompt = f.read()
-
-
-
-        # Get history based on settings
-        history_limit = settings.get_history()
-
-        history = get_history(user_name)[-history_limit:]
-
-
-        conversation = self.format_history(
-            history
-        )
-
-
-
-        prompt = f"""
-{system_prompt}
-
-Conversation:
-{conversation}
-
-Athena:
-"""
+        prompt = conversation_service.build_prompt(
+    user_name,
+    message
+)
 
 
 
@@ -84,11 +49,10 @@ Athena:
 
 
 
-        add_message(
-            user_name,
-            "Athena",
-            answer
-        )
+        conversation_service.save_ai_message(
+        user_name,
+        answer
+)
 
 
         return answer

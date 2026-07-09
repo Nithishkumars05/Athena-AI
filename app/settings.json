@@ -1,6 +1,6 @@
 {
-    "ai_mode": "offline",
-    "model": "qwen2.5-coder:7b",
+    "ai_mode": "cloud",
+    "model": "gemini-2.5-flash",
     "temperature": 0.84,
     "history": 27
 }
