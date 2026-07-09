@@ -38,6 +38,7 @@ class ChatWorker(QRunnable):
                     self.message
                 ):
                     full_response += chunk
+                    print("STREAM CHUNK:", chunk)
                     self.signals.chunk_received.emit(chunk)
 
                 self.signals.finished.emit(full_response)

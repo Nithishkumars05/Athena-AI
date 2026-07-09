@@ -221,7 +221,7 @@ class ModelManager:
             f"Unknown model: {model_name}"
         )
 
-            yield from model_info.instance.stream_generate(
+        yield from model_info.instance.stream_generate(
         user_name,
         message
     )
