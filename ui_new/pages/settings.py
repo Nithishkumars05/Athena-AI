@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 
 from app.settings import settings
-
+from core.model_manager import model_manager
 
 class SettingsPage(QWidget):
 
@@ -201,39 +201,27 @@ class SettingsPage(QWidget):
         self.model_box.blockSignals(True)
         self.model_box.clear()
 
-        if mode == "cloud":
+        if mode == "auto":
 
-            self.model_box.addItems(
-                [
-                    "gemini-2.5-flash"
-                ]
-            )
-
-        elif mode == "offline":
-
-            self.model_box.addItems(
-                [
-                    "qwen3:8b",
-                    "qwen2.5-coder:7b",
-                    "qwen3:14b"
-                ]
-            )
+            self.model_box.addItem("Auto Select")
 
         else:
 
-            self.model_box.addItems(
-                [
-                    "Auto Select"
-                ]
+            models = model_manager.get_models_by_provider(mode)
+
+            for model in models:
+
+                self.model_box.addItem(
+                    model.display_name,
+                    model.name
             )
 
-        index = self.model_box.findText(current_model)
+        index = self.model_box.findData(current_model)
 
         if index >= 0:
             self.model_box.setCurrentIndex(index)
 
         self.model_box.blockSignals(False)
-
     # =====================================================
     # Load Settings
     # =====================================================
@@ -246,9 +234,13 @@ class SettingsPage(QWidget):
 
         self.update_models()
 
-        self.model_box.setCurrentText(
+        index = self.model_box.findData(
             settings.get_model()
-        )
+    )
+
+        if index >= 0:
+            self.model_box.setCurrentIndex(index)
+        
 
         self.temp_slider.setValue(
             int(
@@ -273,7 +265,7 @@ class SettingsPage(QWidget):
         if self.mode_box.currentText() != "auto":
 
             settings.set_model(
-                self.model_box.currentText()
+                self.model_box.currentData()
             )
 
         settings.set_temperature(
