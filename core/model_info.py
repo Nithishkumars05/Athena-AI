@@ -6,9 +6,30 @@ from models.base_model import BaseModel
 @dataclass
 class ModelInfo:
     """
-    Metadata about an AI model.
+    Metadata describing an AI model.
     """
 
+    # Internal model name
     name: str
-    provider: str      # "cloud" or "offline"
+
+    # Display name for UI
+    display_name: str
+
+    # cloud | offline
+    provider: str
+
+    # chat | coding | reasoning | vision
+    category: str
+
+    # Short description
+    description: str
+
+    # Capabilities
+    supports_streaming: bool
+    supports_vision: bool
+
+    # Recommended use
+    recommended_for: str
+
+    # Actual model instance
     instance: BaseModel

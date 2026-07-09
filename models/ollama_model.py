@@ -43,3 +43,10 @@ class OllamaModel(BaseModel):
 
         except Exception as e:
             return f"Ollama Error: {str(e)}"
+        
+    def stream_generate(self, user_name: str, message: str):
+
+        yield self.generate(
+        user_name,
+        message
+    )

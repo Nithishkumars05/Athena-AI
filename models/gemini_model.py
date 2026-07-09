@@ -56,3 +56,10 @@ class GeminiModel(BaseModel):
 
 
         return answer
+    
+    def stream_generate(self, user_name: str, message: str):
+
+        yield self.generate(
+        user_name,
+        message
+    )

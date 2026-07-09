@@ -40,3 +40,18 @@ def chat(user_name: str, message: str) -> str:
     )
 def handle(user_name: str, message: str) -> str:
     return chat(user_name, message)
+
+def stream(user_name: str, message: str):
+
+    yield from model_manager.stream_generate(
+        user_name,
+        message
+    )
+
+
+def stream_handle(user_name: str, message: str):
+
+    yield from stream(
+        user_name,
+        message
+    )
