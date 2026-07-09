@@ -59,7 +59,35 @@ class GeminiModel(BaseModel):
     
     def stream_generate(self, user_name: str, message: str):
 
-        yield self.generate(
+        conversation_service.save_user_message(
         user_name,
         message
+    )
+
+        prompt = conversation_service.build_prompt(
+        user_name,
+        message
+    )
+
+        stream = client.models.generate_content_stream(
+            model=settings.get_model(),
+            contents=prompt,
+            config={
+            "temperature": settings.get_temperature()
+        }
+    )
+
+        full_response = ""
+
+        for chunk in stream:
+
+            if hasattr(chunk, "text") and chunk.text:
+
+                full_response += chunk.text
+
+                yield chunk.text
+
+        conversation_service.save_ai_message(
+        user_name,
+        full_response
     )

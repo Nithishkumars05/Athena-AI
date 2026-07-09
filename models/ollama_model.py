@@ -46,7 +46,38 @@ class OllamaModel(BaseModel):
         
     def stream_generate(self, user_name: str, message: str):
 
-        yield self.generate(
+        conversation_service.save_user_message(
         user_name,
         message
+    )
+
+        prompt = conversation_service.build_prompt(
+        user_name,
+        message
+    )
+
+        stream = ollama.chat(
+        model=self.model_name,
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+            stream=True
+    )
+
+        full_response = ""
+
+        for chunk in stream:
+
+            text = chunk["message"]["content"]
+
+            full_response += text
+
+            yield text
+
+        conversation_service.save_ai_message(
+        user_name,
+        full_response
     )

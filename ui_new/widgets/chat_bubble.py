@@ -92,7 +92,15 @@ class ChatBubble(QWidget):
 
     def set_text(self, text: str):
         """
-        Update the message text.
-        This prepares us for streaming responses.
+        Update the bubble text.
+
+        Used by streaming responses to continuously append
+        new content to the same chat bubble.
         """
         self.label.setText(text)
+
+        # Refresh layout so the bubble grows correctly
+        self.label.adjustSize()
+        self.bubble.adjustSize()
+        self.adjustSize()
+        self.updateGeometry()
