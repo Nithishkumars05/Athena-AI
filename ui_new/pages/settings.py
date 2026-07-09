@@ -66,7 +66,31 @@ class SettingsPage(QWidget):
         )
 
         ai_layout = QVBoxLayout()
+        # AI Mode
 
+        mode_row = QHBoxLayout()
+
+        mode_row.addWidget(
+            QLabel("AI Mode")
+        )
+
+        self.mode_box = QComboBox()
+
+        self.mode_box.addItems(
+            [
+                "auto",
+                "cloud",
+                "offline"
+            ]
+        )
+
+        mode_row.addWidget(
+            self.mode_box
+        )
+
+        ai_layout.addLayout(
+            mode_row
+        )
 
 
         # Model
@@ -82,7 +106,10 @@ class SettingsPage(QWidget):
 
         self.model_box.addItems(
             [
-                "gemini-2.5-flash"
+                "gemini-2.5-flash",
+                "qwen3:8b",
+                "qwen2.5-coder:7b",
+                "qwen3:14b"
             ]
         )
 
@@ -189,49 +216,48 @@ class SettingsPage(QWidget):
 
     def load_settings(self):
 
+        self.mode_box.setCurrentText(
+            settings.get_ai_mode()
+        )
+
         self.model_box.setCurrentText(
             settings.get_model()
         )
 
-
         self.temp_slider.setValue(
             int(
                 settings.get_temperature()
-                * 100
+            *   100
             )
         )
-
 
         self.history_box.setValue(
             settings.get_history()
         )
 
 
-
     def save_settings(self):
+
+        settings.set_ai_mode(
+            self.mode_box.currentText()
+        )
 
         settings.set_model(
             self.model_box.currentText()
         )
 
-
         settings.set_temperature(
-            self.temp_slider.value()
-            /
-            100
+            self.temp_slider.value() / 100
         )
-
 
         settings.set_history(
             self.history_box.value()
         )
-
 
         QMessageBox.information(
             self,
             "Athena AI",
             "Settings saved"
         )
-
 
         print("Settings Updated")

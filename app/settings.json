@@ -1,0 +1,6 @@
+{
+    "ai_mode": "auto",
+    "model": "qwen2.5-coder:7b",
+    "temperature": 0.84,
+    "history": 27
+}
