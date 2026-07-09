@@ -19,22 +19,19 @@ Gemini / OpenAI / Ollama
 """
 
 from core.model_manager import model_manager
-
+from core.routers.task_router import task_router
+from core.routers.model_router import model_router
 
 def chat(user_name: str, message: str) -> str:
-    """
-    Delegate the chat request to the currently
-    selected AI model.
 
-    Args:
-        user_name: Name of the current user.
-        message: User's input message.
+    task_type = task_router.classify(message)
 
-    Returns:
-        AI-generated response.
-    """
+    model_name = model_router.select_model(
+        task_type
+    )
 
-    return model_manager.generate(
+    return model_manager.generate_with_model(
+        model_name=model_name,
         user_name=user_name,
         message=message
     )
@@ -43,9 +40,16 @@ def handle(user_name: str, message: str) -> str:
 
 def stream(user_name: str, message: str):
 
-    yield from model_manager.stream_generate(
-        user_name,
-        message
+    task_type = task_router.classify(message)
+
+    model_name = model_router.select_model(
+        task_type
+    )
+
+    yield from model_manager.stream_generate_with_model(
+        model_name=model_name,
+        user_name=user_name,
+        message=message
     )
 
 

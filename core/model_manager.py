@@ -188,5 +188,43 @@ class ModelManager:
             message
         )
 
+    def generate_with_model(
+        self,
+        model_name: str,
+        user_name: str,
+        message: str
+    ):
+
+        model_info = self.get_model(model_name)
+
+        if model_info is None:
+            raise ValueError(
+            f"Unknown model: {model_name}"
+        )
+
+        return model_info.instance.generate(
+        user_name,
+        message
+    )
+
+    def stream_generate_with_model(
+        self,
+        model_name: str,
+        user_name: str,
+        message: str
+    ):
+
+        model_info = self.get_model(model_name)
+
+        if model_info is None:
+            raise ValueError(
+            f"Unknown model: {model_name}"
+        )
+
+            yield from model_info.instance.stream_generate(
+        user_name,
+        message
+    )
+
 
 model_manager = ModelManager()
