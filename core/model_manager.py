@@ -26,13 +26,33 @@ class ModelManager:
                 name="gemini-2.5-flash",
                 display_name="Gemini 2.5 Flash",
                 provider="cloud",
-                category="chat",
-                description="Fast cloud model for general conversations.",
+
+                capabilities=[
+                    "chat",
+                    "assistant",
+                    "reasoning",
+                    "vision",
+                    "document"
+                ],
+
+                description=(
+                    "Fast cloud model for general conversations "
+                    "and multimodal tasks."
+                ),
+
                 supports_streaming=True,
                 supports_vision=True,
-                recommended_for="General chat, reasoning and images.",
+
+                recommended_for=[
+                    "General conversations",
+                    "Reasoning",
+                    "Image understanding",
+                    "Documents"
+                ],
+
                 instance=GeminiModel()
             ),
+
 
             # ==========================
             # Offline Models
@@ -42,38 +62,87 @@ class ModelManager:
                 name="qwen3:8b",
                 display_name="Qwen3 8B",
                 provider="offline",
-                category="chat",
-                description="Balanced offline chat model.",
+
+                capabilities=[
+                    "chat",
+                    "assistant"
+                ],
+
+                description=(
+                    "Balanced offline model for everyday conversations."
+                ),
+
                 supports_streaming=True,
                 supports_vision=False,
-                recommended_for="General offline conversations.",
+
+                recommended_for=[
+                    "General conversations",
+                    "Offline assistant tasks"
+                ],
+
                 instance=OllamaModel("qwen3:8b")
             ),
+
 
             "qwen2.5-coder:7b": ModelInfo(
                 name="qwen2.5-coder:7b",
                 display_name="Qwen2.5 Coder 7B",
                 provider="offline",
-                category="coding",
-                description="Optimized for programming and debugging.",
+
+                capabilities=[
+                    "coding",
+                    "debugging",
+                    "programming"
+                ],
+
+                description=(
+                    "Optimized model for programming "
+                    "and software development."
+                ),
+
                 supports_streaming=True,
                 supports_vision=False,
-                recommended_for="Code generation and debugging.",
-                instance=OllamaModel("qwen2.5-coder:7b")
+
+                recommended_for=[
+                    "Code generation",
+                    "Debugging",
+                    "Programming assistance"
+                ],
+
+                instance=OllamaModel(
+                    "qwen2.5-coder:7b"
+                )
             ),
+
 
             "qwen3:14b": ModelInfo(
                 name="qwen3:14b",
                 display_name="Qwen3 14B",
                 provider="offline",
-                category="reasoning",
-                description="Larger reasoning-focused offline model.",
+
+                capabilities=[
+                    "reasoning",
+                    "analysis"
+                ],
+
+                description=(
+                    "Large reasoning-focused offline model."
+                ),
+
                 supports_streaming=True,
                 supports_vision=False,
-                recommended_for="Complex reasoning and analysis.",
-                instance=OllamaModel("qwen3:14b")
+
+                recommended_for=[
+                    "Complex reasoning",
+                    "Deep analysis"
+                ],
+
+                instance=OllamaModel(
+                    "qwen3:14b"
+                )
             )
         }
+
 
     # ------------------------------------
     # Model Lookup
@@ -83,9 +152,11 @@ class ModelManager:
 
         return self.models.get(model_name)
 
+
     def get_all_models(self):
 
         return list(self.models.values())
+
 
     def get_models_by_provider(self, provider: str):
 
@@ -95,98 +166,143 @@ class ModelManager:
             if model.provider == provider
         ]
 
-    def get_models_by_category(self, category: str):
+
+    def get_models_by_capability(self, capability: str):
 
         return [
             model
             for model in self.models.values()
-            if model.category == category
+            if capability in model.capabilities
         ]
+
 
     # ------------------------------------
     # Generation
     # ------------------------------------
 
-    def generate(self, user_name: str, message: str):
+    def generate(
+        self,
+        user_name: str,
+        message: str
+    ):
 
         mode = settings.get_ai_mode()
         selected_model = settings.get_model()
 
+
         if mode == "auto":
 
             try:
-                return self.models["qwen3:8b"].instance.generate(
+
+                return self.models[
+                    "qwen3:8b"
+                ].instance.generate(
                     user_name,
                     message
                 )
 
             except Exception:
 
-                return self.models["gemini-2.5-flash"].instance.generate(
+                return self.models[
+                    "gemini-2.5-flash"
+                ].instance.generate(
                     user_name,
                     message
                 )
 
-        model_info = self.get_model(selected_model)
+
+        model_info = self.get_model(
+            selected_model
+        )
+
 
         if model_info is None:
+
             raise ValueError(
                 f"Unknown model: {selected_model}"
             )
 
+
         if model_info.provider != mode:
+
             raise ValueError(
-                f"Model '{selected_model}' does not belong to '{mode}' mode."
+                f"Model '{selected_model}' "
+                f"does not belong to '{mode}' mode."
             )
+
 
         return model_info.instance.generate(
             user_name,
             message
         )
 
+
     # ------------------------------------
     # Streaming
     # ------------------------------------
 
-    def stream_generate(self, user_name: str, message: str):
+    def stream_generate(
+        self,
+        user_name: str,
+        message: str
+    ):
 
         mode = settings.get_ai_mode()
         selected_model = settings.get_model()
+
 
         if mode == "auto":
 
             try:
 
-                yield from self.models["qwen3:8b"].instance.stream_generate(
+                yield from self.models[
+                    "qwen3:8b"
+                ].instance.stream_generate(
                     user_name,
                     message
                 )
 
             except Exception:
 
-                yield from self.models["gemini-2.5-flash"].instance.stream_generate(
+                yield from self.models[
+                    "gemini-2.5-flash"
+                ].instance.stream_generate(
                     user_name,
                     message
                 )
 
             return
 
-        model_info = self.get_model(selected_model)
+
+        model_info = self.get_model(
+            selected_model
+        )
+
 
         if model_info is None:
+
             raise ValueError(
                 f"Unknown model: {selected_model}"
             )
 
+
         if model_info.provider != mode:
+
             raise ValueError(
-                f"Model '{selected_model}' does not belong to '{mode}' mode."
+                f"Model '{selected_model}' "
+                f"does not belong to '{mode}' mode."
             )
+
 
         yield from model_info.instance.stream_generate(
             user_name,
             message
         )
+
+
+    # ------------------------------------
+    # Direct Model Generation
+    # ------------------------------------
 
     def generate_with_model(
         self,
@@ -195,17 +311,23 @@ class ModelManager:
         message: str
     ):
 
-        model_info = self.get_model(model_name)
-
-        if model_info is None:
-            raise ValueError(
-            f"Unknown model: {model_name}"
+        model_info = self.get_model(
+            model_name
         )
 
+
+        if model_info is None:
+
+            raise ValueError(
+                f"Unknown model: {model_name}"
+            )
+
+
         return model_info.instance.generate(
-        user_name,
-        message
-    )
+            user_name,
+            message
+        )
+
 
     def stream_generate_with_model(
         self,
@@ -214,17 +336,22 @@ class ModelManager:
         message: str
     ):
 
-        model_info = self.get_model(model_name)
-
-        if model_info is None:
-            raise ValueError(
-            f"Unknown model: {model_name}"
+        model_info = self.get_model(
+            model_name
         )
 
+
+        if model_info is None:
+
+            raise ValueError(
+                f"Unknown model: {model_name}"
+            )
+
+
         yield from model_info.instance.stream_generate(
-        user_name,
-        message
-    )
+            user_name,
+            message
+        )
 
 
 model_manager = ModelManager()

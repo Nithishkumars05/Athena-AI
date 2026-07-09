@@ -19,7 +19,7 @@ class ModelInfo:
     provider: str
 
     # chat | coding | reasoning | vision
-    category: str
+    capabilities: list[str]
 
     # Short description
     description: str
@@ -29,7 +29,6 @@ class ModelInfo:
     supports_vision: bool
 
     # Recommended use
-    recommended_for: str
-
+    recommended_for: list[str]
     # Actual model instance
     instance: BaseModel

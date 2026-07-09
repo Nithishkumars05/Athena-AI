@@ -227,7 +227,6 @@ class AIConversationWidget(QWidget):
 
 
     def on_chunk(self, chunk):
-        print("UI RECEIVED:", chunk)
         self.stream_buffer += chunk
 
 

@@ -6,6 +6,9 @@ for a given task.
 
 Does not execute models.
 Delegates execution to ModelManager.
+
+Uses model capabilities instead of hardcoded
+model names.
 """
 
 
@@ -14,17 +17,22 @@ from core.model_manager import model_manager
 from app.settings import settings
 
 
+
 class ModelRouter:
 
 
-    def select_model(self, task_type: TaskType):
+    def select_model(
+        self,
+        task_type: TaskType
+    ):
 
         """
-        Select the best model based on:
+        Select the best available model.
 
+        Routing is based on:
         - AI mode
-        - Task type
-        - Model capabilities
+        - Task capability
+        - Registered models
         """
 
 
@@ -42,32 +50,73 @@ class ModelRouter:
 
 
         # --------------------------------
-        # Automatic routing
+        # Capability mapping
         # --------------------------------
 
-        if task_type == TaskType.CODING:
+        capability_map = {
 
-            return "qwen2.5-coder:7b"
+            TaskType.CODING:
+                "coding",
+
+            TaskType.REASONING:
+                "reasoning",
+
+            TaskType.VISION:
+                "vision",
+
+            TaskType.MATH:
+                "reasoning",
+
+            TaskType.DOCUMENT:
+                "document",
+
+            TaskType.CHAT:
+                "chat"
+        }
 
 
-        if task_type == TaskType.REASONING:
-
-            return "qwen3:14b"
-
-
-        if task_type == TaskType.VISION:
-
-            return "gemini-2.5-flash"
+        capability = capability_map.get(
+            task_type,
+            "chat"
+        )
 
 
-        if task_type == TaskType.MATH:
+        # --------------------------------
+        # Find compatible models
+        # --------------------------------
 
-            return "qwen3:14b"
+        models = (
+            model_manager
+            .get_models_by_capability(
+                capability
+            )
+        )
 
 
-        # Default
+        if not models:
 
-        return "qwen3:8b"
+            # fallback
+            return (
+                settings.get_model()
+                or "qwen3:8b"
+            )
+
+
+        # --------------------------------
+        # Select best candidate
+        # --------------------------------
+
+        for model in models:
+
+            if model.provider == "offline":
+
+                return model.name
+
+
+        # If no offline model exists,
+        # use first available
+
+        return models[0].name
 
 
 
