@@ -11,7 +11,7 @@ import os
 from ui_new.widgets.chat_bubble import ChatBubble
 from ui_new.widgets.chat_header import ChatHeader
 from services.chat_service import chat_service
-
+from services.conversation_service import conversation_service
 
 class AIConversationWidget(QWidget):
 
@@ -137,8 +137,25 @@ class AIConversationWidget(QWidget):
         self.input_box.returnPressed.connect(
             self.send
         )
+        self.load_conversation()
 
+    def load_conversation(self):
+        """
+    Load the active conversation into the chat UI.
+    """
 
+        history = conversation_service.load_history()
+
+        for msg in history:
+
+            role = msg.get("role", "").lower()
+            content = msg.get("content", "")
+
+            is_user = role == "user"
+
+            self.add_message(content, is_user)
+
+        self.scroll_bottom()
     # =====================================================
     # Utility
     # =====================================================

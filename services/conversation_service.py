@@ -13,15 +13,51 @@ Every AI model should use this service.
 
 from app.memory import add_message, get_history
 from app.settings import settings
+from app.conversation_store import ConversationStore
 
 
 class ConversationService:
 
-    def load_history(self, user_name):
+    def __init__(self):
+        self.store = ConversationStore()
+
+        conversations = self.store.list()
+
+        if conversations:
+            self.active_conversation = self.store.load(
+                conversations[0]["id"]
+            )
+        else:
+            self.active_conversation = self.store.create()
+
+        
+
+    def get_active_conversation(self):
+        return self.active_conversation
+
+
+    def new_conversation(self):
+        self.active_conversation = self.store.create()
+        return self.active_conversation
+
+
+    def switch_conversation(self, conversation_id):
+        conversation = self.store.load(conversation_id)
+
+        if conversation:
+            self.active_conversation = conversation
+
+        return self.active_conversation
+
+
+    def list_conversations(self):
+        return self.store.list()
+
+    def load_history(self, user_name=None):
 
         history_limit = settings.get_history()
 
-        return get_history(user_name)[-history_limit:]
+        return self.active_conversation.messages[-history_limit:]
 
     def format_history(self, history):
 
@@ -32,13 +68,34 @@ class ConversationService:
 
     def save_user_message(self, user_name, message):
 
-        add_message(
-            user_name,
-            "User",
-            message
-        )
+        self.active_conversation.messages.append(
+        {
+            "role": "User",
+            "content": message
+        }
+    )
 
-    
+        self.store.save(self.active_conversation)
+
+    def rename_conversation(self, title):
+        self.active_conversation.title = title
+        self.store.save(self.active_conversation)
+
+
+    def delete_active_conversation(self):
+
+        conversation_id = self.active_conversation.id
+
+        self.store.delete(conversation_id)
+
+        conversations = self.store.list()
+
+        if conversations:
+            self.active_conversation = self.store.load(
+                conversations[0]["id"]
+        )
+        else:
+            self.active_conversation = self.store.create()
     
     def build_document_prompt(
         self,
@@ -90,11 +147,14 @@ Athena:
 
     def save_ai_message(self, user_name, message):
 
-        add_message(
-            user_name,
-            "Athena",
-            message
-        )
+        self.active_conversation.messages.append(
+        {
+            "role": "Athena",
+            "content": message
+        }
+    )
+
+        self.store.save(self.active_conversation)
 
 
 conversation_service = ConversationService()
