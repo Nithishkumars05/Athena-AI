@@ -79,9 +79,21 @@ class ConversationService:
 
         self.store.save(self.active_conversation)
 
-    def rename_conversation(self, title):
-        self.active_conversation.title = title
-        self.store.save(self.active_conversation)
+    def rename_conversation(self, conversation_id, title):
+
+        conversation = self.store.load(
+        conversation_id
+    )
+
+        if conversation:
+
+            conversation.title = title
+
+            self.store.save(
+            conversation
+        )
+
+        return conversation
 
 
     def delete_active_conversation(self):

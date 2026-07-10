@@ -4,6 +4,8 @@ from PySide6.QtWidgets import (
     QPushButton,
     QListWidget,
     QListWidgetItem,
+    QMenu,
+    QInputDialog,
 )
 
 from PySide6.QtCore import Signal, Qt
@@ -44,11 +46,74 @@ class ConversationSidebar(QWidget):
         self.chat_list.itemClicked.connect(
             self.on_chat_selected
         )
+        self.chat_list.setContextMenuPolicy(
+        Qt.CustomContextMenu
+)
 
+        self.chat_list.customContextMenuRequested.connect(
+    self.show_context_menu
+)
 
         self.refresh()
+    def show_context_menu(self, position):
+
+        item = self.chat_list.itemAt(position)
+
+        if not item:
+            return
 
 
+        menu = QMenu()
+
+
+        rename_action = menu.addAction(
+            "Rename"
+    )
+
+
+        action = menu.exec(
+            self.chat_list.mapToGlobal(position)
+    )
+
+
+        if action == rename_action:
+
+            self.rename_chat(item)
+
+    def rename_chat(self, item):
+
+        conversation_id = item.data(
+        Qt.UserRole
+    )
+
+        print("Renaming ID:", conversation_id)
+
+        new_title, ok = QInputDialog.getText(
+        self,
+        "Rename Conversation",
+        "Title:"
+    )
+
+        if ok and new_title.strip():
+
+            print("New title:", new_title)
+
+            result = conversation_service.rename_conversation(
+            conversation_id,
+            new_title.strip()
+        )
+
+            print(
+            "Returned title:",
+            result.title if result else None
+        )
+
+            print(
+            "After save:",
+            conversation_service.list_conversations()
+        )
+
+            self.refresh()
     def refresh(self):
 
         self.chat_list.clear()
