@@ -15,16 +15,22 @@ ChatAgent
  ↓
 ModelManager
  ↓
-Gemini / OpenAI / Ollama
+Gemini / Ollama
 """
+
+from models.chat_request import ChatRequest
 
 from core.model_manager import model_manager
 from core.routers.task_router import task_router
 from core.routers.model_router import model_router
 
-def chat(user_name: str, message: str) -> str:
 
-    task_type = task_router.classify(message)
+def chat(request: ChatRequest) -> str:
+    """
+    Handle a standard chat request.
+    """
+
+    task_type = task_router.classify(request.message)
 
     model_name = model_router.select_model(
         task_type
@@ -32,15 +38,21 @@ def chat(user_name: str, message: str) -> str:
 
     return model_manager.generate_with_model(
         model_name=model_name,
-        user_name=user_name,
-        message=message
+        user_name=request.user_name,
+        message=request.message
     )
-def handle(user_name: str, message: str) -> str:
-    return chat(user_name, message)
 
-def stream(user_name: str, message: str):
 
-    task_type = task_router.classify(message)
+def handle(request: ChatRequest) -> str:
+    return chat(request)
+
+
+def stream(request: ChatRequest):
+    """
+    Handle a streaming chat request.
+    """
+
+    task_type = task_router.classify(request.message)
 
     model_name = model_router.select_model(
         task_type
@@ -48,14 +60,10 @@ def stream(user_name: str, message: str):
 
     yield from model_manager.stream_generate_with_model(
         model_name=model_name,
-        user_name=user_name,
-        message=message
+        user_name=request.user_name,
+        message=request.message
     )
 
 
-def stream_handle(user_name: str, message: str):
-
-    yield from stream(
-        user_name,
-        message
-    )
+def stream_handle(request: ChatRequest):
+    yield from stream(request)

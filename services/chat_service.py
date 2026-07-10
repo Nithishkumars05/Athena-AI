@@ -1,5 +1,6 @@
 from PySide6.QtCore import QThreadPool
 
+from models.chat_request import ChatRequest
 from services.workers.chat_worker import ChatWorker
 
 
@@ -12,11 +13,22 @@ class ChatService:
     # Normal Request
     # -------------------------
 
-    def send_message(self, message, callback, error_callback=None):
+    def send_message(
+        self,
+        message,
+        callback,
+        error_callback=None,
+        user_name="User",
+    ):
+
+        request = ChatRequest(
+            user_name=user_name,
+            message=message,
+        )
 
         worker = ChatWorker(
-            message,
-            streaming=False
+            request,
+            streaming=False,
         )
 
         worker.signals.finished.connect(callback)
@@ -37,11 +49,17 @@ class ChatService:
         finished_callback,
         error_callback=None,
         started_callback=None,
+        user_name="User",
     ):
 
+        request = ChatRequest(
+            user_name=user_name,
+            message=message,
+        )
+
         worker = ChatWorker(
-            message,
-            streaming=True
+            request,
+            streaming=True,
         )
 
         if started_callback:

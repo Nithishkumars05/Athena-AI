@@ -38,27 +38,7 @@ class ConversationService:
             message
         )
 
-    def build_prompt(self, user_name, message):
-
-        system_prompt = self.load_system_prompt()
-
-        history = self.load_history(user_name)
-
-        conversation = self.format_history(history)
-
-        prompt = f"""
-{system_prompt}
-
-Conversation:
-{conversation}
-
-User:
-{message}
-
-Athena:
-"""
-
-        return prompt
+    
     
     def build_document_prompt(
         self,

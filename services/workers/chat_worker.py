@@ -1,6 +1,7 @@
 from PySide6.QtCore import QObject, QRunnable, Signal, Slot
 
 from agents.dispatcher import dispatcher
+from models.chat_request import ChatRequest
 
 import traceback
 
@@ -14,15 +15,20 @@ class WorkerSignals(QObject):
 
 class ChatWorker(QRunnable):
 
-    def __init__(self, message: str, streaming: bool = False):
+    def __init__(
+        self,
+        request: ChatRequest,
+        streaming: bool = False,
+    ):
         super().__init__()
 
-        self.message = message
+        self.request = request
         self.streaming = streaming
         self.signals = WorkerSignals()
 
     @Slot()
     def run(self):
+
         try:
             self.signals.started.emit()
 
@@ -34,8 +40,7 @@ class ChatWorker(QRunnable):
                 full_response = ""
 
                 for chunk in dispatcher.stream_handle(
-                    "User",
-                    self.message
+                    self.request
                 ):
                     full_response += chunk
                     self.signals.chunk_received.emit(chunk)
@@ -48,13 +53,15 @@ class ChatWorker(QRunnable):
             else:
 
                 response = dispatcher.handle(
-                    "User",
-                    self.message
+                    self.request
                 )
 
                 self.signals.finished.emit(response)
 
         except Exception:
+
             error = traceback.format_exc()
+
             print(error)
+
             self.signals.error.emit(error)
