@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QScrollArea,
 )
+from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QFileDialog, QLabel
 import os
 from ui_new.widgets.chat_bubble import ChatBubble
@@ -14,6 +15,8 @@ from services.chat_service import chat_service
 from services.conversation_service import conversation_service
 
 class AIConversationWidget(QWidget):
+
+    conversation_updated = Signal()
 
     def __init__(self, mode="chat"):
         super().__init__()
@@ -341,6 +344,8 @@ class AIConversationWidget(QWidget):
 
 
         self.scroll_bottom()
+
+        self.conversation_updated.emit()
 
 
     def on_error(self, error):

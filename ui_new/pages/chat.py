@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout
 )
-
+from PySide6.QtCore import Signal
 from ui_new.widgets.ai_conversation import AIConversationWidget
 from ui_new.widgets.conversation_sidebar import ConversationSidebar
 
@@ -41,7 +41,13 @@ class ChatPage(QWidget):
             self.switch_conversation
         )
 
+        self.chat.conversation_updated.connect(
+    self.refresh_sidebar
+)
 
+    def refresh_sidebar(self):
+
+        self.sidebar.refresh()
 
     def switch_conversation(
         self,

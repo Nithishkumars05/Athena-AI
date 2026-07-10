@@ -13,7 +13,7 @@ Every AI model should use this service.
 
 from app.settings import settings
 from app.conversation_store import ConversationStore
-
+from app.title_generator import generate_title
 
 class ConversationService:
 
@@ -69,6 +69,7 @@ class ConversationService:
         )
 
     def save_user_message(self, user_name, message):
+        print("SAVE USER MESSAGE CALLED:", message)
 
         self.active_conversation.messages.append(
         {
@@ -77,8 +78,22 @@ class ConversationService:
         }
     )
 
-        self.store.save(self.active_conversation)
 
+    # Auto title on first message
+
+        if (
+            self.active_conversation.title == "New Chat"
+            and len(self.active_conversation.messages) == 1
+    ):
+
+            self.active_conversation.title = (
+            generate_title(message)
+        )
+
+
+        self.store.save(
+            self.active_conversation
+    )
     def rename_conversation(self, conversation_id, title):
 
         conversation = self.store.load(
