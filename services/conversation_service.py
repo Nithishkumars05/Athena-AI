@@ -110,6 +110,26 @@ class ConversationService:
         )
         else:
             self.active_conversation = self.store.create()
+
+    def delete_conversation(self, conversation_id):
+
+        self.store.delete(
+        conversation_id
+    )
+
+
+        conversations = self.store.list()
+
+
+        if conversations:
+
+            self.active_conversation = self.store.load(
+            conversations[0]["id"]
+        )
+
+        else:
+
+            self.active_conversation = self.store.create()
     
     def build_document_prompt(
         self,

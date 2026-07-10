@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QListWidgetItem,
     QMenu,
     QInputDialog,
+    QMessageBox,
 )
 
 from PySide6.QtCore import Signal, Qt
@@ -69,6 +70,9 @@ class ConversationSidebar(QWidget):
         rename_action = menu.addAction(
             "Rename"
     )
+        delete_action = menu.addAction(
+            "Delete"
+)
 
 
         action = menu.exec(
@@ -79,6 +83,10 @@ class ConversationSidebar(QWidget):
         if action == rename_action:
 
             self.rename_chat(item)
+
+        elif action == delete_action:
+
+            self.delete_chat(item)
 
     def rename_chat(self, item):
 
@@ -114,6 +122,29 @@ class ConversationSidebar(QWidget):
         )
 
             self.refresh()
+
+    def delete_chat(self, item):
+
+        conversation_id = item.data(
+        Qt.UserRole
+    )
+
+
+        reply = QMessageBox.question(
+        self,
+        "Delete Conversation",
+        "Are you sure you want to delete this conversation?"
+    )
+
+
+        if reply == QMessageBox.Yes:
+
+            conversation_service.delete_conversation(
+            conversation_id
+        )
+
+            self.refresh()
+
     def refresh(self):
 
         self.chat_list.clear()
