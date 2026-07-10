@@ -124,6 +124,55 @@ class AIConversationWidget(QWidget):
             input_layout
         )
 
+    def reload_messages(self):
+        """
+    Reload chat bubbles from the active conversation.
+    """
+
+    # Remove existing bubbles
+        while self.chat_layout.count() > 1:
+
+            item = self.chat_layout.takeAt(0)
+
+            widget = item.widget()
+
+            if widget:
+                widget.deleteLater()
+
+
+    # Load current conversation
+
+
+        conversation = (
+            conversation_service.get_active_conversation()
+    )
+
+
+        if conversation is None:
+            return
+
+
+        for message in conversation.messages:
+
+            role = message.get("role", "").lower()
+
+            content = message.get(
+            "content",
+            ""
+        )
+
+
+            is_user = role == "user"
+
+
+            self.add_message(
+            content,
+            is_user
+        )
+
+
+        self.scroll_bottom()
+
         # =====================================================
         # Signals
         # =====================================================

@@ -42,14 +42,22 @@ class ConversationService:
 
 
     def switch_conversation(self, conversation_id):
-        conversation = self.store.load(conversation_id)
+
+        print("Switching to:", conversation_id)
+
+        conversation = self.store.load(
+        conversation_id
+    )
 
         if conversation:
+            print(
+            "Loaded messages:",
+            len(conversation.messages)
+        )
+
             self.active_conversation = conversation
 
         return self.active_conversation
-
-
     def list_conversations(self):
         return self.store.list()
 

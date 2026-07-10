@@ -3,9 +3,10 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QPushButton,
     QListWidget,
+    QListWidgetItem,
 )
 
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Qt
 
 from services.conversation_service import conversation_service
 
@@ -13,6 +14,7 @@ from services.conversation_service import conversation_service
 class ConversationSidebar(QWidget):
 
     conversation_selected = Signal(str)
+
 
     def __init__(self):
         super().__init__()
@@ -23,7 +25,7 @@ class ConversationSidebar(QWidget):
             "+ New Chat"
         )
 
-        self.list_widget = QListWidget()
+        self.chat_list = QListWidget()
 
 
         self.layout.addWidget(
@@ -31,16 +33,16 @@ class ConversationSidebar(QWidget):
         )
 
         self.layout.addWidget(
-            self.list_widget
+            self.chat_list
         )
 
 
         self.new_chat_btn.clicked.connect(
-            self.new_chat
+            self.create_new_chat
         )
 
-        self.list_widget.itemClicked.connect(
-            self.select_conversation
+        self.chat_list.itemClicked.connect(
+            self.on_chat_selected
         )
 
 
@@ -49,20 +51,29 @@ class ConversationSidebar(QWidget):
 
     def refresh(self):
 
-        self.list_widget.clear()
+        self.chat_list.clear()
 
         conversations = (
             conversation_service.list_conversations()
         )
 
-        for conv in conversations:
 
-            self.list_widget.addItem(
-                conv["title"]
+        for conversation in conversations:
+
+            item = QListWidgetItem(
+                conversation["title"]
             )
 
+            item.setData(
+                Qt.UserRole,
+                conversation["id"]
+            )
 
-    def new_chat(self):
+            self.chat_list.addItem(item)
+
+
+
+    def create_new_chat(self):
 
         conversation = (
             conversation_service.new_conversation()
@@ -70,16 +81,17 @@ class ConversationSidebar(QWidget):
 
         self.refresh()
 
-
-    def select_conversation(self, item):
-
-        conversations = (
-            conversation_service.list_conversations()
+        self.conversation_selected.emit(
+            conversation.id
         )
 
-        index = self.list_widget.row(item)
 
-        conversation_id = conversations[index]["id"]
+
+    def on_chat_selected(self, item):
+
+        conversation_id = item.data(
+            Qt.UserRole
+        )
 
         self.conversation_selected.emit(
             conversation_id

@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
     QWidget,
-    QHBoxLayout,
+    QHBoxLayout
 )
 
 from ui_new.widgets.ai_conversation import AIConversationWidget
@@ -10,6 +10,7 @@ from ui_new.widgets.conversation_sidebar import ConversationSidebar
 class ChatPage(QWidget):
 
     def __init__(self):
+
         super().__init__()
 
 
@@ -37,11 +38,15 @@ class ChatPage(QWidget):
 
 
         self.sidebar.conversation_selected.connect(
-            self.load_conversation
+            self.switch_conversation
         )
 
 
-    def load_conversation(self, conversation_id):
+
+    def switch_conversation(
+        self,
+        conversation_id
+    ):
 
         from services.conversation_service import conversation_service
 
