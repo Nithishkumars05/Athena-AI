@@ -1,5 +1,6 @@
 from models.base_model import BaseModel
 from services.conversation_service import conversation_service
+
 import ollama
 
 
@@ -7,6 +8,7 @@ class OllamaModel(BaseModel):
 
     def __init__(self, model_name="qwen3:8b"):
         self.model_name = model_name
+
 
     # -------------------------------------------------
     # Normal Generation
@@ -17,6 +19,7 @@ class OllamaModel(BaseModel):
         user_name,
         prompt,
         original_message=None,
+        image_path=None,
     ):
 
         try:
@@ -26,28 +29,46 @@ class OllamaModel(BaseModel):
                 original_message or prompt
             )
 
+
+            message = {
+                "role": "user",
+                "content": prompt
+            }
+
+
+            # Attach image for vision models
+            if image_path:
+
+                message["images"] = [
+                    image_path
+                ]
+
+
             response = ollama.chat(
                 model=self.model_name,
                 messages=[
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
+                    message
                 ]
             )
 
+
             answer = response["message"]["content"]
+
 
             conversation_service.save_ai_message(
                 user_name,
                 answer
             )
 
+
             return answer
+
 
         except Exception as e:
 
             return f"Ollama Error: {str(e)}"
+
+
 
     # -------------------------------------------------
     # Streaming
@@ -58,25 +79,41 @@ class OllamaModel(BaseModel):
         user_name,
         prompt,
         original_message=None,
+        image_path=None,
     ):
+
 
         conversation_service.save_user_message(
             user_name,
             original_message or prompt
         )
 
+
+        message = {
+            "role": "user",
+            "content": prompt
+        }
+
+
+        # Attach image for vision models
+        if image_path:
+
+            message["images"] = [
+                image_path
+            ]
+
+
         stream = ollama.chat(
             model=self.model_name,
             messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
+                message
             ],
             stream=True
         )
 
+
         full_response = ""
+
 
         for chunk in stream:
 
@@ -85,6 +122,8 @@ class OllamaModel(BaseModel):
             full_response += text
 
             yield text
+
+
 
         conversation_service.save_ai_message(
             user_name,

@@ -42,6 +42,7 @@ def chat(request: ChatRequest) -> str:
         user_name=processed.user_name,
         prompt=processed.prompt,
         original_message=processed.original_message,
+        image_path=processed.file_path,
     )
 
 
@@ -65,8 +66,9 @@ def stream(request: ChatRequest):
     yield from model_manager.stream_generate_with_model(
         model_name=model_name,
         user_name=processed.user_name,
-         prompt=processed.prompt,
-    original_message=processed.original_message,
+        prompt=processed.prompt,
+        original_message=processed.original_message,
+        image_path=processed.file_path,
     )
 
 

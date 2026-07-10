@@ -55,6 +55,39 @@ class ModelManager:
 
 
             # ==========================
+            # Offline Vision Model
+            # ==========================
+
+            "llava:latest": ModelInfo(
+                name="llava:latest",
+                display_name="LLaVA Vision",
+                provider="offline",
+
+                capabilities=[
+                    "chat",
+                    "vision"
+                ],
+
+                description=(
+                    "Offline vision model for image understanding."
+                ),
+
+                supports_streaming=True,
+                supports_vision=True,
+
+                recommended_for=[
+                    "Image understanding",
+                    "Visual analysis",
+                    "Screenshots"
+                ],
+
+                instance=OllamaModel(
+                    "llava:latest"
+                )
+            ),
+
+
+            # ==========================
             # Offline Models
             # ==========================
 
@@ -80,7 +113,9 @@ class ModelManager:
                     "Offline assistant tasks"
                 ],
 
-                instance=OllamaModel("qwen3:8b")
+                instance=OllamaModel(
+                    "qwen3:8b"
+                )
             ),
 
 
@@ -181,112 +216,56 @@ class ModelManager:
     # ------------------------------------
 
     def generate(
-    self,
-    user_name: str,
-    prompt: str,
-    original_message: str | None = None,
-):
+        self,
+        user_name: str,
+        prompt: str,
+        original_message: str | None = None,
+    ):
 
         mode = settings.get_ai_mode()
         selected_model = settings.get_model()
-
-        if mode == "auto":
-
-            try:
-
-                return self.models[
-                "qwen3:8b"
-            ].instance.generate(
-                user_name=user_name,
-                prompt=prompt,
-                original_message=original_message,
-            )
-
-            except Exception:
-
-                return self.models[
-                "gemini-2.5-flash"
-            ].instance.generate(
-                user_name=user_name,
-                prompt=prompt,
-                original_message=original_message,
-            )
 
         model_info = self.get_model(selected_model)
 
         if model_info is None:
             raise ValueError(
-            f"Unknown model: {selected_model}"
-        )
-
-        if model_info.provider != mode:
-            raise ValueError(
-            f"Model '{selected_model}' "
-            f"does not belong to '{mode}' mode."
-        )
+                f"Unknown model: {selected_model}"
+            )
 
         return model_info.instance.generate(
-        user_name=user_name,
-        prompt=prompt,
-        original_message=original_message,
-    )
+            user_name=user_name,
+            prompt=prompt,
+            original_message=original_message,
+        )
+
 
     # ------------------------------------
     # Streaming
     # ------------------------------------
 
     def stream_generate(
-    self,
-    user_name: str,
-    prompt: str,
-    original_message: str | None = None,
-):
+        self,
+        user_name: str,
+        prompt: str,
+        original_message: str | None = None,
+    ):
 
         mode = settings.get_ai_mode()
         selected_model = settings.get_model()
-
-        if mode == "auto":
-
-            try:
-
-                yield from self.models[
-                "qwen3:8b"
-            ].instance.stream_generate(
-                user_name=user_name,
-                prompt=prompt,
-                original_message=original_message,
-            )
-
-            except Exception:
-
-                yield from self.models[
-                "gemini-2.5-flash"
-            ].instance.stream_generate(
-                user_name=user_name,
-                prompt=prompt,
-                original_message=original_message,
-            )
-
-            return
 
         model_info = self.get_model(selected_model)
 
         if model_info is None:
             raise ValueError(
-            f"Unknown model: {selected_model}"
-        )
-
-        if model_info.provider != mode:
-            raise ValueError(
-            f"Model '{selected_model}' "
-            f"does not belong to '{mode}' mode."
-        )
+                f"Unknown model: {selected_model}"
+            )
 
         yield from model_info.instance.stream_generate(
-        user_name=user_name,
-        prompt=prompt,
-        original_message=original_message,
-    )
+            user_name=user_name,
+            prompt=prompt,
+            original_message=original_message,
+        )
+
 
     # ------------------------------------
     # Direct Model Generation
@@ -294,43 +273,50 @@ class ModelManager:
 
     def generate_with_model(
         self,
-    model_name: str,
-    user_name: str,
-    prompt: str,
-    original_message: str | None = None,
-):
+        model_name: str,
+        user_name: str,
+        prompt: str,
+        original_message: str | None = None,
+        image_path: str | None = None,
+    ):
 
         model_info = self.get_model(model_name)
 
         if model_info is None:
             raise ValueError(
-            f"Unknown model: {model_name}"
-        )
+                f"Unknown model: {model_name}"
+            )
 
         return model_info.instance.generate(
-        user_name=user_name,
-        prompt=prompt,
-        original_message=original_message,
-    )
+            user_name=user_name,
+            prompt=prompt,
+            original_message=original_message,
+            image_path=image_path,
+        )
+
+
     def stream_generate_with_model(
-    self,
-    model_name: str,
-    user_name: str,
-    prompt: str,
-    original_message: str | None = None,
-):
+        self,
+        model_name: str,
+        user_name: str,
+        prompt: str,
+        original_message: str | None = None,
+        image_path: str | None = None,
+    ):
 
         model_info = self.get_model(model_name)
 
         if model_info is None:
             raise ValueError(
-            f"Unknown model: {model_name}"
-        )
+                f"Unknown model: {model_name}"
+            )
 
         yield from model_info.instance.stream_generate(
-        user_name=user_name,
-        prompt=prompt,
-        original_message=original_message,
-    )
+            user_name=user_name,
+            prompt=prompt,
+            original_message=original_message,
+            image_path=image_path,
+        )
+
 
 model_manager = ModelManager()
