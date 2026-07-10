@@ -1,13 +1,29 @@
 """
 Athena AI - DOCX Processor
 
-Responsible only for extracting text from DOCX files.
-Does not communicate with AI models.
+Responsible for extracting text from Microsoft Word
+documents.
+
+Does NOT communicate with AI models.
 """
+
+from docx import Document
 
 
 class DocxProcessor:
-    """Extracts content from DOCX documents."""
+    """Extracts text from DOCX documents."""
 
     def extract(self, file_path: str) -> str:
-        raise NotImplementedError("DOCX extraction not implemented yet.")
+        """
+        Read all paragraphs from a DOCX file and return
+        them as plain text.
+        """
+        document = Document(file_path)
+
+        paragraphs = [
+            paragraph.text
+            for paragraph in document.paragraphs
+            if paragraph.text.strip()
+        ]
+
+        return "\n".join(paragraphs)

@@ -1,13 +1,20 @@
 """
 Athena AI - Code Processor
 
-Responsible only for extracting source code files.
-Does not communicate with AI models.
+Responsible for extracting source code from supported
+programming language files.
+
+Does NOT perform analysis.
+Does NOT communicate with AI models.
 """
 
 
 class CodeProcessor:
-    """Extracts content from source code files."""
+    """Extracts source code from code files."""
 
     def extract(self, file_path: str) -> str:
-        raise NotImplementedError("Code extraction not implemented yet.")
+        """
+        Read and return the contents of a source code file.
+        """
+        with open(file_path, "r", encoding="utf-8") as file:
+            return file.read()
