@@ -90,3 +90,4 @@ class FileService:
             raise ValueError(f"Unsupported file type: {extension}")
 
         return processor
+file_service = FileService()

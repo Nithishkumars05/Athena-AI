@@ -1,13 +1,29 @@
 """
 Athena AI - PDF Processor
 
-Responsible only for extracting text from PDF files.
-Does not communicate with AI models.
+Responsible for extracting text from PDF documents.
+
+Does NOT communicate with AI models.
 """
+
+from pypdf import PdfReader
 
 
 class PdfProcessor:
-    """Extracts content from PDF documents."""
+    """Extracts text from PDF documents."""
 
     def extract(self, file_path: str) -> str:
-        raise NotImplementedError("PDF extraction not implemented yet.")
+        """
+        Read every page of a PDF and return the extracted text.
+        """
+        reader = PdfReader(file_path)
+
+        pages = []
+
+        for page in reader.pages:
+            text = page.extract_text()
+
+            if text:
+                pages.append(text)
+
+        return "\n".join(pages)

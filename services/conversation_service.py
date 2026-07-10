@@ -59,6 +59,44 @@ Athena:
 """
 
         return prompt
+    
+    def build_document_prompt(
+        self,
+        user_name: str,
+        message: str,
+        document_text: str,
+        file_name: str = "document"
+    ):
+        """
+        Build a prompt that includes uploaded document content.
+        """
+
+        system_prompt = self.load_system_prompt()
+
+        history = self.load_history(user_name)
+        conversation = self.format_history(history)
+
+        prompt = f"""
+{system_prompt}
+
+Conversation:
+{conversation}
+
+Uploaded File:
+{file_name}
+
+Document Content:
+----------------
+{document_text}
+----------------
+
+User Request:
+{message}
+
+Athena:
+"""
+
+        return prompt
 
     def load_system_prompt(self):
 
