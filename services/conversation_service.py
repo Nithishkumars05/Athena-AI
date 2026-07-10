@@ -11,7 +11,6 @@ Responsible for:
 Every AI model should use this service.
 """
 
-from app.memory import add_message, get_history
 from app.settings import settings
 from app.conversation_store import ConversationStore
 
@@ -43,17 +42,12 @@ class ConversationService:
 
     def switch_conversation(self, conversation_id):
 
-        print("Switching to:", conversation_id)
 
         conversation = self.store.load(
         conversation_id
     )
 
         if conversation:
-            print(
-            "Loaded messages:",
-            len(conversation.messages)
-        )
 
             self.active_conversation = conversation
 
