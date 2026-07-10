@@ -6,7 +6,8 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QScrollArea,
 )
-
+from PySide6.QtWidgets import QFileDialog, QLabel
+import os
 from ui_new.widgets.chat_bubble import ChatBubble
 from ui_new.widgets.chat_header import ChatHeader
 from services.chat_service import chat_service
@@ -21,7 +22,7 @@ class AIConversationWidget(QWidget):
 
         self.current_ai_bubble = None
         self.stream_buffer = ""
-
+        self.selected_file = None
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
@@ -103,17 +104,21 @@ class AIConversationWidget(QWidget):
             )
         )
 
-        self.send_btn = QPushButton(
-            "Send"
-        )
+        self.attach_btn = QPushButton("📎")
 
-        input_layout.addWidget(
-            self.input_box
-        )
+        self.file_label = QLabel("")
 
-        input_layout.addWidget(
-            self.send_btn
-        )
+        self.file_label.setMinimumWidth(120)
+
+        self.send_btn = QPushButton("Send")
+
+        input_layout.addWidget(self.attach_btn)
+
+        input_layout.addWidget(self.file_label)
+
+        input_layout.addWidget(self.input_box)
+
+        input_layout.addWidget(self.send_btn)
 
         self.layout.addLayout(
             input_layout
@@ -126,7 +131,9 @@ class AIConversationWidget(QWidget):
         self.send_btn.clicked.connect(
             self.send
         )
-
+        self.attach_btn.clicked.connect(
+        self.attach_file
+)
         self.input_box.returnPressed.connect(
             self.send
         )
@@ -170,7 +177,22 @@ class AIConversationWidget(QWidget):
         self.scroll_bottom()
 
         return bubble
+    def attach_file(self):
 
+        file_path, _ = QFileDialog.getOpenFileName(
+        self,
+        "Select File",
+        "",
+        "Supported Files (*.txt *.docx *.pdf *.py *.png *.jpg);;All Files (*)"
+    )
+
+        if file_path:
+
+            self.selected_file = file_path
+
+            self.file_label.setText(
+            os.path.basename(file_path)
+        )
 
     # =====================================================
     # Send
@@ -178,40 +200,40 @@ class AIConversationWidget(QWidget):
 
     def send(self):
 
-        message = (
-            self.input_box.text()
-            .strip()
-        )
+        message = self.input_box.text().strip()
 
         if not message:
             return
 
-
         self.add_message(
-            message,
-            True
-        )
+        message,
+        True
+    )
+
+    # Save the selected file BEFORE clearing anything
+        selected_file = self.selected_file
 
         self.input_box.clear()
 
-
         self.stream_buffer = ""
 
-
         self.current_ai_bubble = self.add_message(
-            "Athena is thinking...",
-            False
-        )
-
+        "Athena is thinking...",
+        False
+    )
 
         chat_service.stream_message(
             message=message,
-            chunk_callback=self.on_chunk,
-            finished_callback=self.on_finished,
-            error_callback=self.on_error,
-            started_callback=self.on_started,
-        )
+        file_path=selected_file,
+        chunk_callback=self.on_chunk,
+        finished_callback=self.on_finished,
+        error_callback=self.on_error,
+        started_callback=self.on_started,
+    )
 
+    # Reset file selection AFTER sending
+        self.selected_file = None
+        self.file_label.setText("")
 
     # =====================================================
     # Streaming Callbacks

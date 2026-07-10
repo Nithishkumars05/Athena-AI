@@ -36,6 +36,7 @@ class ProcessedRequest:
     """
 
     user_name: str
+    original_message: str
     prompt: str
 
 
@@ -49,12 +50,20 @@ class RequestProcessor:
         # ----------------------------------
         # Document Conversation
         # ----------------------------------
-
+        print("=" * 60)
+        print("FILE PATH:", request.file_path)
+        print("=" * 60)
         if request.file_path:
 
             document_text = file_service.extract_file(
                 request.file_path
             )
+
+            print("=" * 60)
+            print("DOCUMENT LENGTH:", len(document_text))
+            print("FIRST 500 CHARACTERS:")
+            print(document_text[:500])
+            print("=" * 60)
 
             prompt = document_prompt_builder.build(
                 user_name=request.user_name,
@@ -76,6 +85,7 @@ class RequestProcessor:
 
         return ProcessedRequest(
             user_name=request.user_name,
+            original_message=request.message,
             prompt=prompt,
         )
 

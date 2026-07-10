@@ -2,7 +2,7 @@ from PySide6.QtCore import QThreadPool
 
 from models.chat_request import ChatRequest
 from services.workers.chat_worker import ChatWorker
-
+from models.chat_request import ChatRequest
 
 class ChatService:
 
@@ -18,18 +18,21 @@ class ChatService:
         message,
         callback,
         error_callback=None,
+        file_path=None,
         user_name="User",
     ):
 
+
         request = ChatRequest(
-            user_name=user_name,
-            message=message,
-        )
+    user_name="User",
+    message=message,
+    file_path=file_path,
+)
 
         worker = ChatWorker(
-            request,
-            streaming=False,
-        )
+    request,
+    streaming=False,
+)
 
         worker.signals.finished.connect(callback)
 
@@ -49,18 +52,21 @@ class ChatService:
         finished_callback,
         error_callback=None,
         started_callback=None,
+        file_path=None,
         user_name="User",
     ):
 
+
         request = ChatRequest(
-            user_name=user_name,
-            message=message,
-        )
+    user_name="User",
+    message=message,
+    file_path=file_path,
+)
 
         worker = ChatWorker(
-            request,
-            streaming=True,
-        )
+    request,
+    streaming=True,
+)
 
         if started_callback:
             worker.signals.started.connect(started_callback)

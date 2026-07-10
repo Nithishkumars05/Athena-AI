@@ -8,19 +8,24 @@ class OllamaModel(BaseModel):
     def __init__(self, model_name="qwen3:8b"):
         self.model_name = model_name
 
+    # -------------------------------------------------
+    # Normal Generation
+    # -------------------------------------------------
 
-    def generate(self, user_name, message):
+    def generate(
+        self,
+        user_name,
+        prompt,
+        original_message=None,
+    ):
+
         try:
 
             conversation_service.save_user_message(
-    user_name,
-    message
-)
+                user_name,
+                original_message or prompt
+            )
 
-            prompt = conversation_service.build_prompt(
-        user_name,
-        message
-)
             response = ollama.chat(
                 model=self.model_name,
                 messages=[
@@ -34,38 +39,42 @@ class OllamaModel(BaseModel):
             answer = response["message"]["content"]
 
             conversation_service.save_ai_message(
-    user_name,
-            answer
-)
+                user_name,
+                answer
+            )
 
             return answer
 
-
         except Exception as e:
+
             return f"Ollama Error: {str(e)}"
-        
-    def stream_generate(self, user_name: str, message: str):
+
+    # -------------------------------------------------
+    # Streaming
+    # -------------------------------------------------
+
+    def stream_generate(
+        self,
+        user_name,
+        prompt,
+        original_message=None,
+    ):
 
         conversation_service.save_user_message(
-        user_name,
-        message
-    )
-
-        prompt = conversation_service.build_prompt(
-        user_name,
-        message
-    )
+            user_name,
+            original_message or prompt
+        )
 
         stream = ollama.chat(
-        model=self.model_name,
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
+            model=self.model_name,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
             stream=True
-    )
+        )
 
         full_response = ""
 
@@ -78,6 +87,6 @@ class OllamaModel(BaseModel):
             yield text
 
         conversation_service.save_ai_message(
-        user_name,
-        full_response
-    )
+            user_name,
+            full_response
+        )
