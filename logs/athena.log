@@ -599,3 +599,6 @@ httpx.ConnectError: [Errno 11001] getaddrinfo failed
 2026-07-11 22:03:02 | INFO | Streaming started | Model=gemini-2.5-flash
 2026-07-11 22:03:03 | INFO | Streaming completed | Model=gemini-2.5-flash
 2026-07-11 22:03:03 | INFO | Streaming chat completed
+2026-07-11 22:06:28 | INFO | ============================================================
+2026-07-11 22:06:28 | INFO | Athena AI started successfully.
+2026-07-11 22:06:28 | INFO | ============================================================
