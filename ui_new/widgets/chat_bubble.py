@@ -1,14 +1,13 @@
 from PySide6.QtWidgets import (
     QWidget,
     QLabel,
-    QTextBrowser,
     QHBoxLayout,
     QVBoxLayout,
     QFrame
 )
 from PySide6.QtCore import Qt
 from datetime import datetime
-
+from ui_new.widgets.markdown_widget import MarkdownWidget
 
 class ChatBubble(QWidget):
 
@@ -49,35 +48,9 @@ class ChatBubble(QWidget):
 
         else:
 
-            self.label = QTextBrowser()
+            self.label = MarkdownWidget()
 
-            self.label.setOpenExternalLinks(True)
-
-            self.label.setFrameShape(
-        QFrame.NoFrame
-    )
-
-            self.label.setReadOnly(True)
-
-            self.label.setHorizontalScrollBarPolicy(
-        Qt.ScrollBarAlwaysOff
-    )
-
-            self.label.setVerticalScrollBarPolicy(
-        Qt.ScrollBarAlwaysOff
-    )
-
-            self.label.setStyleSheet("""
-        QTextBrowser{
-            background:transparent;
-            color:white;
-            border:none;
-            font-size:14px;
-        }
-    """)
-
-            self.label.setMarkdown(text)
-
+            self.label.set_markdown(text)
         # Time
         self.time = QLabel(
             datetime.now().strftime("%H:%M")
@@ -131,16 +104,21 @@ class ChatBubble(QWidget):
         if self.is_user:
 
             self.label.setText(text)
+
             self.label.adjustSize()
 
         else:
 
-            self.label.setMarkdown(text)
-            self.label.document().adjustSize()
+            self.label.set_markdown(text)
+
+            self.label.adjustSize()
 
         self.bubble.adjustSize()
+
         self.adjustSize()
+
         self.updateGeometry()
 
         if self.parentWidget():
+
             self.parentWidget().adjustSize()

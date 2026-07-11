@@ -1,16 +1,16 @@
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
-    QLineEdit,
-    QPushButton,
     QHBoxLayout,
+    QTextEdit,
+    QPushButton,
     QScrollArea,
     QFileDialog,
     QLabel,
+    QFrame,
 )
 
-from PySide6.QtCore import Signal
-
+from PySide6.QtCore import Qt, Signal, QEvent
 import os
 
 from ui_new.widgets.chat_bubble import ChatBubble
@@ -32,16 +32,16 @@ class AIConversationWidget(QWidget):
 
         self.current_ai_bubble = None
         self.stream_buffer = ""
-
         self.selected_file = None
-        self.preview_widget: AttachmentPreview | None = None
+        self.preview_widget = None
 
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(0)
 
-        # =====================================================
+        # ==========================================
         # Titles
-        # =====================================================
+        # ==========================================
 
         self.titles = {
             "chat": "💬 Athena Chat",
@@ -52,38 +52,38 @@ class AIConversationWidget(QWidget):
 
         self.subtitles = {
             "chat": "General AI conversation",
-            "math": "Solve equations and mathematical problems",
-            "report": "Generate professional reports",
-            "document": "Summarize and analyze documents",
+            "math": "Solve equations",
+            "report": "Generate reports",
+            "document": "Analyze documents",
         }
 
         self.placeholders = {
             "chat": "Message Athena...",
-            "math": "Enter a mathematical problem...",
-            "report": "Generate a report on...",
-            "document": "Ask about a document...",
+            "math": "Solve...",
+            "report": "Generate report...",
+            "document": "Ask about your document...",
         }
 
-        # =====================================================
+        # ==========================================
         # Header
-        # =====================================================
+        # ==========================================
 
         self.header = ChatHeader(
             title=self.titles.get(
                 self.mode,
-                "🦉 Athena AI",
+                "Athena AI"
             ),
             subtitle=self.subtitles.get(
                 self.mode,
-                "Your Personal AI Engineer",
+                ""
             ),
         )
 
         self.layout.addWidget(self.header)
 
-        # =====================================================
+        # ==========================================
         # Chat Area
-        # =====================================================
+        # ==========================================
 
         self.chat_widget = QWidget()
 
@@ -91,55 +91,105 @@ class AIConversationWidget(QWidget):
             self.chat_widget
         )
 
-        self.chat_layout.setSpacing(10)
+        self.chat_layout.setSpacing(12)
+        self.chat_layout.setContentsMargins(
+            15,
+            15,
+            15,
+            15
+        )
+
         self.chat_layout.addStretch()
 
         self.scroll = QScrollArea()
+
         self.scroll.setWidgetResizable(True)
+
         self.scroll.setWidget(
             self.chat_widget
         )
 
-        self.layout.addWidget(self.scroll)
+        self.scroll.setFrameShape(
+            QFrame.NoFrame
+        )
 
-        # =====================================================
+        self.layout.addWidget(
+            self.scroll,
+            1
+        )
+
+        # ==========================================
+        # Bottom Composer
+        # ==========================================
+
+        self.bottom_panel = QFrame()
+
+        self.bottom_panel.setStyleSheet("""
+        QFrame{
+            background:#17181E;
+            border-top:1px solid #303030;
+        }
+        """)
+
+        self.bottom_layout = QVBoxLayout(
+            self.bottom_panel
+        )
+
+        self.bottom_layout.setContentsMargins(
+            10,
+            10,
+            10,
+            10
+        )
+
+        self.bottom_layout.setSpacing(8)
+
+        # ==========================================
         # Attachment Preview
-        # =====================================================
+        # ==========================================
 
         self.preview_container = QVBoxLayout()
-        self.layout.addLayout(
+
+        self.bottom_layout.addLayout(
             self.preview_container
         )
 
-        # =====================================================
-        # Input Area
-        # =====================================================
+        # ==========================================
+        # Input Row
+        # ==========================================
 
         input_layout = QHBoxLayout()
 
         self.attach_btn = QPushButton("📎")
 
-        self.file_label = QLabel("")
-
-        self.file_label.setMinimumWidth(150)
-
-        self.file_label.setStyleSheet(
-            """
-            color:#888;
-            font-size:11px;
-            """
-        )
-
-        self.input_box = QLineEdit()
+        self.input_box = QTextEdit()
 
         self.input_box.setPlaceholderText(
             self.placeholders.get(
                 self.mode,
-                "Message Athena...",
+                "Message Athena..."
             )
         )
 
+        self.input_box.installEventFilter(self)
+        self.input_box.textChanged.connect(
+            self.resize_input_box
+)
+
+        self.input_box.setMinimumHeight(45)
+        self.input_box.setMaximumHeight(120)
+
+        self.input_box.setStyleSheet("""
+        QTextEdit{
+            border-radius:12px;
+            padding:8px;
+            font-size:14px;
+        }
+        """)
+
         self.send_btn = QPushButton("Send")
+
+        self.file_label = QLabel()
 
         input_layout.addWidget(
             self.attach_btn
@@ -150,20 +200,25 @@ class AIConversationWidget(QWidget):
         )
 
         input_layout.addWidget(
-            self.input_box
+            self.input_box,
+            1
         )
 
         input_layout.addWidget(
             self.send_btn
         )
 
-        self.layout.addLayout(
+        self.bottom_layout.addLayout(
             input_layout
         )
 
-        # =====================================================
+        self.layout.addWidget(
+            self.bottom_panel
+        )
+
+        # ==========================================
         # Signals
-        # =====================================================
+        # ==========================================
 
         self.send_btn.clicked.connect(
             self.send
@@ -173,26 +228,14 @@ class AIConversationWidget(QWidget):
             self.attach_file
         )
 
-        self.input_box.returnPressed.connect(
-            self.send
-        )
-
-        # =====================================================
-        # Initial Conversation
-        # =====================================================
-
         self.load_conversation()
 
         # =====================================================
-    # Reload Messages
+    # Conversation Loading
     # =====================================================
 
     def reload_messages(self):
-        """
-        Reload all messages from the active conversation.
-        """
 
-        # Remove every bubble except the stretch
         while self.chat_layout.count() > 1:
 
             item = self.chat_layout.takeAt(0)
@@ -228,27 +271,21 @@ class AIConversationWidget(QWidget):
 
         self.scroll_bottom()
 
-    # =====================================================
-    # Load Conversation
-    # =====================================================
 
     def load_conversation(self):
-        """
-        Load the currently active conversation.
-        """
 
         history = (
             conversation_service.load_history()
         )
 
-        for message in history:
+        for msg in history:
 
-            role = message.get(
+            role = msg.get(
                 "role",
                 ""
             ).lower()
 
-            content = message.get(
+            content = msg.get(
                 "content",
                 ""
             )
@@ -260,48 +297,47 @@ class AIConversationWidget(QWidget):
 
         self.scroll_bottom()
 
+
     # =====================================================
-    # Utility
+    # Utilities
     # =====================================================
 
     def scroll_bottom(self):
 
-        scrollbar = (
-            self.scroll.verticalScrollBar()
-        )
+        scrollbar = self.scroll.verticalScrollBar()
 
         scrollbar.setValue(
             scrollbar.maximum()
         )
 
+
     # =====================================================
-    # Message Bubble
+    # Chat Messages
     # =====================================================
 
     def add_message(
         self,
-        text: str,
-        is_user: bool,
+        text,
+        is_user
     ):
 
         bubble = ChatBubble(
-            text=text,
-            is_user=is_user,
+            text,
+            is_user
         )
 
         self.chat_layout.insertWidget(
             self.chat_layout.count() - 1,
-            bubble,
+            bubble
         )
-
-        bubble.show()
 
         self.scroll_bottom()
 
         return bubble
-    
-        # =====================================================
-    # Attach File
+
+
+    # =====================================================
+    # Attachment
     # =====================================================
 
     def attach_file(self):
@@ -310,16 +346,7 @@ class AIConversationWidget(QWidget):
             self,
             "Select File",
             "",
-            (
-                "Supported Files "
-                "(*.txt *.docx *.pdf "
-                "*.py *.cpp *.c *.h *.hpp "
-                "*.java *.js *.ts *.cs *.go *.rs "
-                "*.php *.html *.css *.json *.xml "
-                "*.yaml *.yml *.toml "
-                "*.png *.jpg *.jpeg *.bmp);;"
-                "All Files (*)"
-            ),
+            "Supported Files (*.txt *.docx *.pdf *.py *.png *.jpg *.jpeg *.bmp);;All Files (*)"
         )
 
         if not file_path:
@@ -331,8 +358,6 @@ class AIConversationWidget(QWidget):
             os.path.basename(file_path)
         )
 
-        # Remove previous preview
-
         if self.preview_widget:
 
             self.preview_container.removeWidget(
@@ -340,10 +365,6 @@ class AIConversationWidget(QWidget):
             )
 
             self.preview_widget.deleteLater()
-
-            self.preview_widget = None
-
-        # Create new preview
 
         self.preview_widget = AttachmentPreview(
             file_path
@@ -357,17 +378,12 @@ class AIConversationWidget(QWidget):
             self.preview_widget
         )
 
-        self.input_box.setFocus()
-
-    # =====================================================
-    # Remove Attachment
-    # =====================================================
 
     def remove_attachment(self):
 
         self.selected_file = None
 
-        self.file_label.setText("")
+        self.file_label.clear()
 
         if self.preview_widget:
 
@@ -379,50 +395,34 @@ class AIConversationWidget(QWidget):
 
             self.preview_widget = None
 
-        self.input_box.setFocus()
-
-    # =====================================================
+        # =====================================================
     # Send Message
     # =====================================================
 
     def send(self):
 
-        message = self.input_box.text().strip()
+        message = self.input_box.toPlainText().strip()
 
         if not message:
             return
 
-        # User bubble
-
         self.add_message(
             message,
-            True,
+            True
         )
-
-        # Preserve attachment
 
         selected_file = self.selected_file
 
-        # Reset input
-
         self.input_box.clear()
+
+        self.input_box.setFixedHeight(45)
 
         self.stream_buffer = ""
 
-        # Prevent duplicate sends
-
-        self.send_btn.setEnabled(False)
-
-        self.attach_btn.setEnabled(False)
-
-        # Placeholder bubble
-
         self.current_ai_bubble = self.add_message(
             "Athena is thinking...",
-            False,
+            False
         )
-
-        # Stream response
 
         chat_service.stream_message(
             message=message,
@@ -433,82 +433,93 @@ class AIConversationWidget(QWidget):
             started_callback=self.on_started,
         )
 
-        # Clear attachment UI
-
         self.remove_attachment()
 
+
+    # =====================================================
+    # Input Box Auto Resize
+    # =====================================================
+
+    def resize_input_box(self):
+
+        document = self.input_box.document()
+
+        height = int(document.size().height()) + 12
+
+        height = max(45, min(height, 120))
+
+        self.input_box.setFixedHeight(height)
+
+
+        # =====================================================
+    # Enter = Send
+    # Shift+Enter = New Line
+    # =====================================================
+
+    def eventFilter(self, obj, event):
+
+        if obj == self.input_box:
+
+            if event.type() == QEvent.KeyPress:
+
+                if event.key() in (
+                    Qt.Key_Return,
+                    Qt.Key_Enter
+                ):
+
+                    if event.modifiers() == Qt.ShiftModifier:
+
+                        return False
+
+                    self.send()
+
+                    return True
+
+        return super().eventFilter(obj, event)
+    
         # =====================================================
     # Streaming Callbacks
     # =====================================================
 
     def on_started(self):
-        """
-        Called when the worker starts generating.
-        """
 
         if self.current_ai_bubble:
-
             self.current_ai_bubble.set_text(
                 "Athena is thinking..."
             )
 
-        self.scroll_bottom()
 
-    def on_chunk(self, chunk: str):
-        """
-        Called whenever a new streamed chunk arrives.
-        """
+    def on_chunk(self, chunk):
 
         self.stream_buffer += chunk
 
         if self.current_ai_bubble:
-
             self.current_ai_bubble.set_text(
                 self.stream_buffer
             )
 
         self.scroll_bottom()
 
-    def on_finished(self, response: str):
-        """
-        Called after streaming completes.
-        """
+
+    def on_finished(self, response):
 
         self.stream_buffer = response
 
         if self.current_ai_bubble:
-
             self.current_ai_bubble.set_text(
                 response
             )
-
-        # Re-enable controls
-
-        self.send_btn.setEnabled(True)
-        self.attach_btn.setEnabled(True)
-
-        self.input_box.setFocus()
 
         self.scroll_bottom()
 
         self.conversation_updated.emit()
 
-    def on_error(self, error: str):
-        """
-        Called when generation fails.
-        """
+
+    def on_error(self, error):
 
         if self.current_ai_bubble:
-
             self.current_ai_bubble.set_text(
                 f"⚠️ {error}"
             )
-
-        # Re-enable controls
-
-        self.send_btn.setEnabled(True)
-        self.attach_btn.setEnabled(True)
-
-        self.input_box.setFocus()
 
         self.scroll_bottom()
