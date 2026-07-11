@@ -42,7 +42,9 @@
     {
         "id": "3ad98c1f-db8e-455a-b7c3-d953f2565a4c",
         "title": "Hello",
-        "updated_at": "2026-07-10T21:54:28.746731"
+        "updated_at": "2026-07-11T22:03:03.558098",
+        "pinned": false,
+        "folder": "General"
     },
     {
         "id": "9ae803ce-798a-443e-83bb-409f7c31fa8b",
