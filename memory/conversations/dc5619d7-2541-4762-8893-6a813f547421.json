@@ -2,7 +2,7 @@
     "id": "dc5619d7-2541-4762-8893-6a813f547421",
     "title": "Explain This Image",
     "created_at": "2026-07-10T22:07:29.403033",
-    "updated_at": "2026-07-11T12:46:01.592367",
+    "updated_at": "2026-07-11T21:59:47.413460",
     "messages": [
         {
             "role": "User",
@@ -64,5 +64,8 @@
             "role": "User",
             "content": "what is the power of 2 and 3"
         }
-    ]
+    ],
+    "pinned": true,
+    "folder": "General",
+    "tags": []
 }

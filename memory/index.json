@@ -50,11 +50,6 @@
         "updated_at": "2026-07-10T21:57:11.501318"
     },
     {
-        "id": "34dc17bf-a5b8-42cf-986b-133b72fdc71b",
-        "title": "New Chat",
-        "updated_at": "2026-07-10T22:01:39.728372"
-    },
-    {
         "id": "6d25508f-2994-4175-b3b6-2b0c69e48710",
         "title": "New Chat",
         "updated_at": "2026-07-10T22:03:50.720453"
@@ -62,7 +57,9 @@
     {
         "id": "dc5619d7-2541-4762-8893-6a813f547421",
         "title": "Explain This Image",
-        "updated_at": "2026-07-11T12:46:01.592367"
+        "updated_at": "2026-07-11T21:59:47.413460",
+        "pinned": true,
+        "folder": "General"
     },
     {
         "id": "5ac9d066-04b1-4f14-b300-e492d20e9fb0",
@@ -94,7 +91,9 @@
     {
         "id": "aaca2d3c-f72d-4632-a912-714e1e8171c9",
         "title": "Hello Athena Which Model Are",
-        "updated_at": "2026-07-11T21:47:39.639351"
+        "updated_at": "2026-07-11T21:59:53.199325",
+        "pinned": false,
+        "folder": "hello"
     },
     {
         "id": "c5dada9d-4cb4-45d3-9f7e-f417dffc53ae",
