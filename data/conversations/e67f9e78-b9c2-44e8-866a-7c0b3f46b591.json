@@ -1,0 +1,17 @@
+{
+    "id": "e67f9e78-b9c2-44e8-866a-7c0b3f46b591",
+    "title": "Test Chat",
+    "created_at": "2026-07-11T14:20:50.988917",
+    "messages": [
+        {
+            "role": "user",
+            "content": "Hello Athena",
+            "timestamp": "2026-07-11T14:20:50.989211"
+        },
+        {
+            "role": "assistant",
+            "content": "Hello!",
+            "timestamp": "2026-07-11T14:20:50.989379"
+        }
+    ]
+}
