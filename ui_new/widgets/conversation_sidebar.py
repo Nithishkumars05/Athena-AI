@@ -27,8 +27,14 @@ class ConversationSidebar(QWidget):
         self.new_chat_btn = QPushButton(
             "+ New Chat"
         )
+        self.new_chat_btn.setFocusPolicy(
+    Qt.NoFocus
+)
 
         self.chat_list = QListWidget()
+        self.chat_list.setFocusPolicy(
+    Qt.NoFocus
+)
 
 
         self.layout.addWidget(

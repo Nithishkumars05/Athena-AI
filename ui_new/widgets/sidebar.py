@@ -49,6 +49,7 @@ class Sidebar(QWidget):
 
             button = QPushButton(page)
             button.setFixedHeight(42)
+            button.setFocusPolicy(Qt.NoFocus)
 
             button.clicked.connect(
                 lambda checked=False, i=index: self.change_page(i)

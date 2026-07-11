@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
     QStackedWidget,
     QLabel
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt,QTimer
 
 from ui_new.widgets.sidebar import Sidebar
 
@@ -86,3 +86,11 @@ class MainWindow(QMainWindow):
         self.sidebar.page_changed.connect(
             self.pages.setCurrentIndex
         )
+
+    def showEvent(self, event):
+        super().showEvent(event)
+
+        QTimer.singleShot(
+        250,
+        lambda: self.chat.chat.input_box.setFocus()
+    )

@@ -12,14 +12,15 @@ from PySide6.QtWidgets import (
 
 from PySide6.QtCore import Qt, Signal, QEvent
 import os
-
+from PySide6.QtCore import QTimer
 from ui_new.widgets.chat_bubble import ChatBubble
 from ui_new.widgets.chat_header import ChatHeader
 from ui_new.widgets.attachment_preview import AttachmentPreview
-
+from ui_new.widgets.message_input import MessageInput
 from services.chat_service import chat_service
 from services.conversation_service import conversation_service
-
+from PySide6.QtGui import QIcon
+from PySide6.QtCore import QSize
 
 class AIConversationWidget(QWidget):
 
@@ -158,59 +159,86 @@ class AIConversationWidget(QWidget):
         # Input Row
         # ==========================================
 
-        input_layout = QHBoxLayout()
+        # ==========================================
+# Composer
+# ==========================================
 
-        self.attach_btn = QPushButton("📎")
+        self.composer = QFrame()
 
-        self.input_box = QTextEdit()
+        self.composer.setStyleSheet("""
+        QFrame{
+    background:#24262E;
+    border:1px solid #3A3A3A;
+    border-radius:18px;
+}
+""")
 
-        self.input_box.setPlaceholderText(
-            self.placeholders.get(
-                self.mode,
-                "Message Athena..."
-            )
-        )
+        composer_layout = QHBoxLayout(self.composer)
 
-        self.input_box.installEventFilter(self)
-        self.input_box.textChanged.connect(
-            self.resize_input_box
+        composer_layout.setContentsMargins(10,8,10,8)
+        composer_layout.setSpacing(8)
+# Attachment Button
+        self.attach_btn = QPushButton()
+        self.attach_btn.setIcon(
+    QIcon("assets/icons/attach.svg")
 )
 
-        self.input_box.setMinimumHeight(45)
-        self.input_box.setMaximumHeight(120)
+        self.attach_btn.setIconSize(QSize(20, 20))
+        self.attach_btn.setFixedSize(36,36)
 
-        self.input_box.setStyleSheet("""
-        QTextEdit{
-            border-radius:12px;
-            padding:8px;
-            font-size:14px;
-        }
-        """)
+        self.attach_btn.setStyleSheet("""
+QPushButton{
+    border:none;
+    background:transparent;
+}
+QPushButton:hover{
+    background:#383838;
+    border-radius:18px;
+}
+""")
 
-        self.send_btn = QPushButton("Send")
+        self.input_box = MessageInput()
+
+        self.input_box.setPlaceholderText(
+        self.placeholders.get(
+                self.mode,
+        "Message Athena..."
+    )
+)
+
+        self.input_box.sendRequested.connect(
+         self.send
+)
+
+# Send Button
+        self.send_btn = QPushButton()
+        self.send_btn.setIcon(
+    QIcon("assets/icons/send.svg")
+)
+
+        self.send_btn.setIconSize(QSize(20, 20))
+
+        self.send_btn.setFixedSize(38,38)
+
+        self.send_btn.setStyleSheet("""
+QPushButton{
+    background:#2B6FFF;
+    border:none;
+    border-radius:19px;
+}
+QPushButton:hover{
+    background:#4A82FF;
+}
+""")
 
         self.file_label = QLabel()
 
-        input_layout.addWidget(
-            self.attach_btn
-        )
+        composer_layout.addWidget(self.attach_btn)
+        composer_layout.addWidget(self.file_label)
+        composer_layout.addWidget(self.input_box,1)
+        composer_layout.addWidget(self.send_btn)
 
-        input_layout.addWidget(
-            self.file_label
-        )
-
-        input_layout.addWidget(
-            self.input_box,
-            1
-        )
-
-        input_layout.addWidget(
-            self.send_btn
-        )
-
-        self.bottom_layout.addLayout(
-            input_layout
-        )
+        self.bottom_layout.addWidget(self.composer)
 
         self.layout.addWidget(
             self.bottom_panel
@@ -229,6 +257,10 @@ class AIConversationWidget(QWidget):
         )
 
         self.load_conversation()
+        QTimer.singleShot(
+    0,
+    self.input_box.setFocus
+)
 
         # =====================================================
     # Conversation Loading
@@ -436,49 +468,9 @@ class AIConversationWidget(QWidget):
         self.remove_attachment()
 
 
-    # =====================================================
-    # Input Box Auto Resize
-    # =====================================================
+   
 
-    def resize_input_box(self):
-
-        document = self.input_box.document()
-
-        height = int(document.size().height()) + 12
-
-        height = max(45, min(height, 120))
-
-        self.input_box.setFixedHeight(height)
-
-
-        # =====================================================
-    # Enter = Send
-    # Shift+Enter = New Line
-    # =====================================================
-
-    def eventFilter(self, obj, event):
-
-        if obj == self.input_box:
-
-            if event.type() == QEvent.KeyPress:
-
-                if event.key() in (
-                    Qt.Key_Return,
-                    Qt.Key_Enter
-                ):
-
-                    if event.modifiers() == Qt.ShiftModifier:
-
-                        return False
-
-                    self.send()
-
-                    return True
-
-        return super().eventFilter(obj, event)
-    
-        # =====================================================
-    # Streaming Callbacks
+   
     # =====================================================
 
     def on_started(self):
@@ -511,7 +503,7 @@ class AIConversationWidget(QWidget):
             )
 
         self.scroll_bottom()
-
+        self.input_box.setFocus()
         self.conversation_updated.emit()
 
 
@@ -521,5 +513,5 @@ class AIConversationWidget(QWidget):
             self.current_ai_bubble.set_text(
                 f"⚠️ {error}"
             )
-
+        self.input_box.setFocus()
         self.scroll_bottom()
