@@ -67,7 +67,9 @@
     {
         "id": "5ac9d066-04b1-4f14-b300-e492d20e9fb0",
         "title": "New Chat",
-        "updated_at": "2026-07-11T16:10:42.396023"
+        "updated_at": "2026-07-11T21:58:40.148413",
+        "pinned": false,
+        "folder": "General"
     },
     {
         "id": "4564f68d-ac8d-4ae2-8662-b2d8ec50c17c",

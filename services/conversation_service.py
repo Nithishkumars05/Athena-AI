@@ -3,211 +3,437 @@ Athena AI - Conversation Service
 
 Responsible for:
 
-- Loading system prompt
-- Loading conversation history
+- Active conversation management
+- Loading history
 - Saving messages
-- Building prompts
+- Searching conversations
+- Rename
+- Pin
+- Folder management
+- Prompt history building
 
-Every AI model should use this service.
+UI never directly touches storage.
 """
 
 from app.settings import settings
 from app.conversation_store import ConversationStore
 from app.title_generator import generate_title
 
+
 class ConversationService:
 
+
     def __init__(self):
+
         self.store = ConversationStore()
 
         conversations = self.store.list()
 
-        if conversations:
-            self.active_conversation = self.store.load(
-                conversations[0]["id"]
-            )
-        else:
-            self.active_conversation = self.store.create()
 
-        
+        if conversations:
+
+            self.active_conversation = (
+                self.store.load(
+                    conversations[0]["id"]
+                )
+            )
+
+        else:
+
+            self.active_conversation = (
+                self.store.create()
+            )
+
+
+
+    # =====================================================
+    # Active Conversation
+    # =====================================================
+
 
     def get_active_conversation(self):
+
         return self.active_conversation
-    def search_conversations(self, query: str):
-        """
-    Search conversations by title or message content.
-    """
-        return self.store.search(query)
+
+
 
     def new_conversation(self):
-        self.active_conversation = self.store.create()
+
+        self.active_conversation = (
+            self.store.create()
+        )
+
         return self.active_conversation
 
 
-    def switch_conversation(self, conversation_id):
 
-
-        conversation = self.store.load(
+    def switch_conversation(
+        self,
         conversation_id
-    )
+    ):
+
+
+        conversation = (
+            self.store.load(
+                conversation_id
+            )
+        )
+
 
         if conversation:
 
             self.active_conversation = conversation
 
+
         return self.active_conversation
+
+
+
+    # =====================================================
+    # Listing / Searching
+    # =====================================================
+
+
     def list_conversations(self):
+
         return self.store.list()
 
-    def load_history(self, user_name=None):
-
-        history_limit = settings.get_history()
-
-        return self.active_conversation.messages[-history_limit:]
-
-    def format_history(self, history):
-
-        return "\n".join(
-            f"{msg['role']}: {msg['content']}"
-            for msg in history
-        )
-
-    def save_user_message(self, user_name, message):
-        print("SAVE USER MESSAGE CALLED:", message)
-
-        self.active_conversation.messages.append(
-        {
-            "role": "User",
-            "content": message
-        }
-    )
 
 
-    # Auto title on first message
-
-        if (
-            self.active_conversation.title == "New Chat"
-            and len(self.active_conversation.messages) == 1
+    def search_conversations(
+        self,
+        query
     ):
 
-            self.active_conversation.title = (
-            generate_title(message)
+        return self.store.search(
+            query
         )
+
+
+
+    # =====================================================
+    # History
+    # =====================================================
+
+
+    def load_history(
+        self,
+        user_name=None
+    ):
+
+        if not self.active_conversation:
+
+            return []
+
+
+        limit = (
+            settings.get_history()
+        )
+
+
+        return (
+            self.active_conversation
+            .messages[-limit:]
+        )
+
+
+
+    def format_history(
+        self,
+        history
+    ):
+
+
+        return "\n".join(
+
+            f"{msg['role']}: {msg['content']}"
+
+            for msg in history
+
+        )
+
+
+
+    # =====================================================
+    # Message Saving
+    # =====================================================
+
+
+    def save_user_message(
+        self,
+        user_name,
+        message
+    ):
+
+
+        self.active_conversation.messages.append({
+
+            "role":
+                "User",
+
+            "content":
+                message
+
+        })
+
+
+
+        # Auto title generation
+
+        if (
+
+            self.active_conversation.title
+            == "New Chat"
+
+            and
+
+            len(
+                self.active_conversation.messages
+            )
+            == 1
+
+        ):
+
+
+            self.active_conversation.title = (
+                generate_title(
+                    message
+                )
+            )
+
 
 
         self.store.save(
             self.active_conversation
-    )
-    def rename_conversation(self, conversation_id, title):
+        )
 
-        conversation = self.store.load(
-        conversation_id
-    )
+
+
+    def save_ai_message(
+        self,
+        user_name,
+        message
+    ):
+
+
+        self.active_conversation.messages.append({
+
+            "role":
+                "Athena",
+
+            "content":
+                message
+
+        })
+
+
+        self.store.save(
+            self.active_conversation
+        )
+
+
+
+    # =====================================================
+    # Rename
+    # =====================================================
+
+
+    def rename_conversation(
+        self,
+        conversation_id,
+        title
+    ):
+
+
+        conversation = (
+            self.store.load(
+                conversation_id
+            )
+        )
+
 
         if conversation:
+
 
             conversation.title = title
 
             self.store.save(
-            conversation
-        )
+                conversation
+            )
+
 
         return conversation
 
 
-    def delete_active_conversation(self):
 
-        conversation_id = self.active_conversation.id
+    # =====================================================
+    # Delete
+    # =====================================================
 
-        self.store.delete(conversation_id)
 
-        conversations = self.store.list()
+    def delete_conversation(
+        self,
+        conversation_id
+    ):
 
-        if conversations:
-            self.active_conversation = self.store.load(
-                conversations[0]["id"]
-        )
-        else:
-            self.active_conversation = self.store.create()
-
-    def delete_conversation(self, conversation_id):
 
         self.store.delete(
-        conversation_id
-    )
-
-
-        conversations = self.store.list()
-
-
-        if conversations:
-
-            self.active_conversation = self.store.load(
-            conversations[0]["id"]
+            conversation_id
         )
+
+
+        remaining = (
+            self.store.list()
+        )
+
+
+        if remaining:
+
+
+            self.active_conversation = (
+                self.store.load(
+                    remaining[0]["id"]
+                )
+            )
 
         else:
 
-            self.active_conversation = self.store.create()
-    
+
+            self.active_conversation = (
+                self.store.create()
+            )
+
+
+
+    # =====================================================
+    # Pin
+    # =====================================================
+
+
+    def pin_conversation(
+        self,
+        conversation_id
+    ):
+
+        self.store.set_pin(
+            conversation_id,
+            True
+        )
+
+
+
+    def unpin_conversation(
+        self,
+        conversation_id
+    ):
+
+        self.store.set_pin(
+            conversation_id,
+            False
+        )
+
+
+
+    # =====================================================
+    # Folder
+    # =====================================================
+
+
+    def move_to_folder(
+        self,
+        conversation_id,
+        folder
+    ):
+
+
+        self.store.set_folder(
+            conversation_id,
+            folder
+        )
+
+
+
+    # =====================================================
+    # Document Prompt
+    # =====================================================
+
+
     def build_document_prompt(
         self,
-        user_name: str,
-        message: str,
-        document_text: str,
-        file_name: str = "document"
+        user_name,
+        message,
+        document_text,
+        file_name="document"
     ):
-        """
-        Build a prompt that includes uploaded document content.
-        """
 
-        system_prompt = self.load_system_prompt()
 
-        history = self.load_history(user_name)
-        conversation = self.format_history(history)
+        system_prompt = (
+            self.load_system_prompt()
+        )
 
-        prompt = f"""
+
+        history = (
+            self.load_history(
+                user_name
+            )
+        )
+
+
+        conversation = (
+            self.format_history(
+                history
+            )
+        )
+
+
+        return f"""
 {system_prompt}
 
+
 Conversation:
+
 {conversation}
 
+
 Uploaded File:
+
 {file_name}
 
+
 Document Content:
-----------------
-{document_text}
+
 ----------------
 
+{document_text}
+
+----------------
+
+
 User Request:
+
 {message}
+
 
 Athena:
 """
 
-        return prompt
+
+
+    # =====================================================
+    # System Prompt
+    # =====================================================
+
 
     def load_system_prompt(self):
 
         with open(
-        "prompts/system_prompt.txt",
-        "r",
+            "prompts/system_prompt.txt",
+            "r",
             encoding="utf-8"
-        ) as f:
+        ) as file:
 
-            return f.read()
+            return file.read()
 
-    def save_ai_message(self, user_name, message):
-
-        self.active_conversation.messages.append(
-        {
-            "role": "Athena",
-            "content": message
-        }
-    )
-
-        self.store.save(self.active_conversation)
 
 
 conversation_service = ConversationService()
