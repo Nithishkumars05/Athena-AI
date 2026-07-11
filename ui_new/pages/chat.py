@@ -57,14 +57,16 @@ class ChatPage(QWidget):
         self.sidebar.refresh()
 
     def switch_conversation(
-        self,
-        conversation_id
-    ):
+    self,
+    conversation_id
+):
 
         from services.conversation_service import conversation_service
 
-        conversation_service.switch_conversation(
-            conversation_id
-        )
+        conversation = conversation_service.switch_conversation(
+        conversation_id
+    )
 
-        self.chat.reload_messages()
+        if conversation:
+
+            self.chat.reload_messages()

@@ -268,42 +268,51 @@ QPushButton:hover{
 
     def reload_messages(self):
 
-        while self.chat_layout.count() > 1:
-
-            item = self.chat_layout.takeAt(0)
-
-            widget = item.widget()
-
-            if widget:
-                widget.deleteLater()
-
         conversation = (
-            conversation_service.get_active_conversation()
-        )
+        conversation_service.get_active_conversation()
+    )
 
-        if conversation is None:
+        if not conversation:
             return
+
+
+    # Clear current chat UI
+
+        self.clear_messages()
+
+
+    # Load stored messages
 
         for message in conversation.messages:
 
             role = message.get(
-                "role",
-                ""
-            ).lower()
+            "role",
+            ""
+        ).lower()
 
             content = message.get(
-                "content",
-                ""
+            "content",
+            ""
+        )
+
+
+            if role == "user":
+
+                self.add_message(
+                content,
+                True
             )
 
-            self.add_message(
+
+            elif role == "athena":
+
+                self.add_message(
                 content,
-                role == "user"
+                False
             )
+
 
         self.scroll_bottom()
-
-
     def load_conversation(self):
 
         history = (
@@ -341,6 +350,17 @@ QPushButton:hover{
         scrollbar.setValue(
             scrollbar.maximum()
         )
+    def clear_messages(self):
+
+        while self.chat_layout.count() > 1:
+
+            item = self.chat_layout.takeAt(0)
+
+            widget = item.widget()
+
+            if widget:
+
+                widget.deleteLater()
 
 
     # =====================================================
