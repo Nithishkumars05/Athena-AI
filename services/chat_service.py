@@ -20,13 +20,15 @@ class ChatService:
         error_callback=None,
         file_path=None,
         user_name="User",
+        conversation_id=None,
     ):
 
 
         request = ChatRequest(
-    user_name="User",
+    user_name=user_name,
     message=message,
     file_path=file_path,
+    conversation_id=conversation_id,
 )
 
         worker = ChatWorker(
@@ -54,13 +56,16 @@ class ChatService:
         started_callback=None,
         file_path=None,
         user_name="User",
+        conversation_id=None,
     ):
 
 
         request = ChatRequest(
-    user_name="User",
+    user_name=user_name,
     message=message,
     file_path=file_path,
+    conversation_id=conversation_id,
+
 )
 
         worker = ChatWorker(

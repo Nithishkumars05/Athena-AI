@@ -14,3 +14,6 @@ class ChatRequest:
     user_name: str
     message: str
     file_path: Optional[str] = None
+
+    # Conversation support
+    conversation_id: Optional[str] = None
