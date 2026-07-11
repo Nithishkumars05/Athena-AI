@@ -5,14 +5,21 @@ from PySide6.QtWidgets import (
     QPushButton,
     QHBoxLayout,
     QScrollArea,
+    QFileDialog,
+    QLabel,
 )
+
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QFileDialog, QLabel
+
 import os
+
 from ui_new.widgets.chat_bubble import ChatBubble
 from ui_new.widgets.chat_header import ChatHeader
+from ui_new.widgets.attachment_preview import AttachmentPreview
+
 from services.chat_service import chat_service
 from services.conversation_service import conversation_service
+
 
 class AIConversationWidget(QWidget):
 
@@ -25,7 +32,10 @@ class AIConversationWidget(QWidget):
 
         self.current_ai_bubble = None
         self.stream_buffer = ""
+
         self.selected_file = None
+        self.preview_widget: AttachmentPreview | None = None
+
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
@@ -61,12 +71,12 @@ class AIConversationWidget(QWidget):
         self.header = ChatHeader(
             title=self.titles.get(
                 self.mode,
-                "🦉 Athena AI"
+                "🦉 Athena AI",
             ),
             subtitle=self.subtitles.get(
                 self.mode,
-                "Your Personal AI Engineer"
-            )
+                "Your Personal AI Engineer",
+            ),
         )
 
         self.layout.addWidget(self.header)
@@ -93,46 +103,96 @@ class AIConversationWidget(QWidget):
         self.layout.addWidget(self.scroll)
 
         # =====================================================
-        # Input
+        # Attachment Preview
+        # =====================================================
+
+        self.preview_container = QVBoxLayout()
+        self.layout.addLayout(
+            self.preview_container
+        )
+
+        # =====================================================
+        # Input Area
         # =====================================================
 
         input_layout = QHBoxLayout()
+
+        self.attach_btn = QPushButton("📎")
+
+        self.file_label = QLabel("")
+
+        self.file_label.setMinimumWidth(150)
+
+        self.file_label.setStyleSheet(
+            """
+            color:#888;
+            font-size:11px;
+            """
+        )
 
         self.input_box = QLineEdit()
 
         self.input_box.setPlaceholderText(
             self.placeholders.get(
                 self.mode,
-                "Message Athena..."
+                "Message Athena...",
             )
         )
 
-        self.attach_btn = QPushButton("📎")
-
-        self.file_label = QLabel("")
-
-        self.file_label.setMinimumWidth(120)
-
         self.send_btn = QPushButton("Send")
 
-        input_layout.addWidget(self.attach_btn)
+        input_layout.addWidget(
+            self.attach_btn
+        )
 
-        input_layout.addWidget(self.file_label)
+        input_layout.addWidget(
+            self.file_label
+        )
 
-        input_layout.addWidget(self.input_box)
+        input_layout.addWidget(
+            self.input_box
+        )
 
-        input_layout.addWidget(self.send_btn)
+        input_layout.addWidget(
+            self.send_btn
+        )
 
         self.layout.addLayout(
             input_layout
         )
 
+        # =====================================================
+        # Signals
+        # =====================================================
+
+        self.send_btn.clicked.connect(
+            self.send
+        )
+
+        self.attach_btn.clicked.connect(
+            self.attach_file
+        )
+
+        self.input_box.returnPressed.connect(
+            self.send
+        )
+
+        # =====================================================
+        # Initial Conversation
+        # =====================================================
+
+        self.load_conversation()
+
+        # =====================================================
+    # Reload Messages
+    # =====================================================
+
     def reload_messages(self):
         """
-    Reload chat bubbles from the active conversation.
-    """
+        Reload all messages from the active conversation.
+        """
 
-    # Remove existing bubbles
+        # Remove every bubble except the stretch
         while self.chat_layout.count() > 1:
 
             item = self.chat_layout.takeAt(0)
@@ -142,72 +202,64 @@ class AIConversationWidget(QWidget):
             if widget:
                 widget.deleteLater()
 
-
-    # Load current conversation
-
-
         conversation = (
             conversation_service.get_active_conversation()
-    )
-
+        )
 
         if conversation is None:
             return
 
-
         for message in conversation.messages:
 
-            role = message.get("role", "").lower()
+            role = message.get(
+                "role",
+                ""
+            ).lower()
 
             content = message.get(
-            "content",
-            ""
-        )
-
-
-            is_user = role == "user"
-
+                "content",
+                ""
+            )
 
             self.add_message(
-            content,
-            is_user
-        )
-
+                content,
+                role == "user"
+            )
 
         self.scroll_bottom()
 
-        # =====================================================
-        # Signals
-        # =====================================================
-
-        self.send_btn.clicked.connect(
-            self.send
-        )
-        self.attach_btn.clicked.connect(
-        self.attach_file
-)
-        self.input_box.returnPressed.connect(
-            self.send
-        )
-        self.load_conversation()
+    # =====================================================
+    # Load Conversation
+    # =====================================================
 
     def load_conversation(self):
         """
-    Load the active conversation into the chat UI.
-    """
+        Load the currently active conversation.
+        """
 
-        history = conversation_service.load_history()
+        history = (
+            conversation_service.load_history()
+        )
 
-        for msg in history:
+        for message in history:
 
-            role = msg.get("role", "").lower()
-            content = msg.get("content", "")
+            role = message.get(
+                "role",
+                ""
+            ).lower()
 
-            is_user = role == "user"
+            content = message.get(
+                "content",
+                ""
+            )
 
-            self.add_message(content, is_user)
+            self.add_message(
+                content,
+                role == "user"
+            )
 
         self.scroll_bottom()
+
     # =====================================================
     # Utility
     # =====================================================
@@ -222,49 +274,115 @@ class AIConversationWidget(QWidget):
             scrollbar.maximum()
         )
 
-
     # =====================================================
-    # Messages
+    # Message Bubble
     # =====================================================
 
     def add_message(
         self,
-        text,
-        is_user
+        text: str,
+        is_user: bool,
     ):
 
         bubble = ChatBubble(
-            text,
-            is_user
+            text=text,
+            is_user=is_user,
         )
 
         self.chat_layout.insertWidget(
             self.chat_layout.count() - 1,
-            bubble
+            bubble,
         )
+
+        bubble.show()
 
         self.scroll_bottom()
 
         return bubble
+    
+        # =====================================================
+    # Attach File
+    # =====================================================
+
     def attach_file(self):
 
         file_path, _ = QFileDialog.getOpenFileName(
-        self,
-        "Select File",
-        "",
-        "Supported Files (*.txt *.docx *.pdf *.py *.png *.jpg);;All Files (*)"
-    )
+            self,
+            "Select File",
+            "",
+            (
+                "Supported Files "
+                "(*.txt *.docx *.pdf "
+                "*.py *.cpp *.c *.h *.hpp "
+                "*.java *.js *.ts *.cs *.go *.rs "
+                "*.php *.html *.css *.json *.xml "
+                "*.yaml *.yml *.toml "
+                "*.png *.jpg *.jpeg *.bmp);;"
+                "All Files (*)"
+            ),
+        )
 
-        if file_path:
+        if not file_path:
+            return
 
-            self.selected_file = file_path
+        self.selected_file = file_path
 
-            self.file_label.setText(
+        self.file_label.setText(
             os.path.basename(file_path)
         )
 
+        # Remove previous preview
+
+        if self.preview_widget:
+
+            self.preview_container.removeWidget(
+                self.preview_widget
+            )
+
+            self.preview_widget.deleteLater()
+
+            self.preview_widget = None
+
+        # Create new preview
+
+        self.preview_widget = AttachmentPreview(
+            file_path
+        )
+
+        self.preview_widget.removed.connect(
+            self.remove_attachment
+        )
+
+        self.preview_container.addWidget(
+            self.preview_widget
+        )
+
+        self.input_box.setFocus()
+
     # =====================================================
-    # Send
+    # Remove Attachment
+    # =====================================================
+
+    def remove_attachment(self):
+
+        self.selected_file = None
+
+        self.file_label.setText("")
+
+        if self.preview_widget:
+
+            self.preview_container.removeWidget(
+                self.preview_widget
+            )
+
+            self.preview_widget.deleteLater()
+
+            self.preview_widget = None
+
+        self.input_box.setFocus()
+
+    # =====================================================
+    # Send Message
     # =====================================================
 
     def send(self):
@@ -274,41 +392,59 @@ class AIConversationWidget(QWidget):
         if not message:
             return
 
-        self.add_message(
-        message,
-        True
-    )
+        # User bubble
 
-    # Save the selected file BEFORE clearing anything
+        self.add_message(
+            message,
+            True,
+        )
+
+        # Preserve attachment
+
         selected_file = self.selected_file
+
+        # Reset input
 
         self.input_box.clear()
 
         self.stream_buffer = ""
 
+        # Prevent duplicate sends
+
+        self.send_btn.setEnabled(False)
+
+        self.attach_btn.setEnabled(False)
+
+        # Placeholder bubble
+
         self.current_ai_bubble = self.add_message(
-        "Athena is thinking...",
-        False
-    )
+            "Athena is thinking...",
+            False,
+        )
+
+        # Stream response
 
         chat_service.stream_message(
             message=message,
-        file_path=selected_file,
-        chunk_callback=self.on_chunk,
-        finished_callback=self.on_finished,
-        error_callback=self.on_error,
-        started_callback=self.on_started,
-    )
+            file_path=selected_file,
+            chunk_callback=self.on_chunk,
+            finished_callback=self.on_finished,
+            error_callback=self.on_error,
+            started_callback=self.on_started,
+        )
 
-    # Reset file selection AFTER sending
-        self.selected_file = None
-        self.file_label.setText("")
+        # Clear attachment UI
 
-    # =====================================================
+        self.remove_attachment()
+
+        # =====================================================
     # Streaming Callbacks
     # =====================================================
 
     def on_started(self):
+        """
+        Called when the worker starts generating.
+        """
 
         if self.current_ai_bubble:
 
@@ -316,10 +452,14 @@ class AIConversationWidget(QWidget):
                 "Athena is thinking..."
             )
 
+        self.scroll_bottom()
 
-    def on_chunk(self, chunk):
+    def on_chunk(self, chunk: str):
+        """
+        Called whenever a new streamed chunk arrives.
+        """
+
         self.stream_buffer += chunk
-
 
         if self.current_ai_bubble:
 
@@ -327,14 +467,14 @@ class AIConversationWidget(QWidget):
                 self.stream_buffer
             )
 
-
         self.scroll_bottom()
 
-
-    def on_finished(self, response):
+    def on_finished(self, response: str):
+        """
+        Called after streaming completes.
+        """
 
         self.stream_buffer = response
-
 
         if self.current_ai_bubble:
 
@@ -342,13 +482,21 @@ class AIConversationWidget(QWidget):
                 response
             )
 
+        # Re-enable controls
+
+        self.send_btn.setEnabled(True)
+        self.attach_btn.setEnabled(True)
+
+        self.input_box.setFocus()
 
         self.scroll_bottom()
 
         self.conversation_updated.emit()
 
-
-    def on_error(self, error):
+    def on_error(self, error: str):
+        """
+        Called when generation fails.
+        """
 
         if self.current_ai_bubble:
 
@@ -356,5 +504,11 @@ class AIConversationWidget(QWidget):
                 f"⚠️ {error}"
             )
 
+        # Re-enable controls
+
+        self.send_btn.setEnabled(True)
+        self.attach_btn.setEnabled(True)
+
+        self.input_box.setFocus()
 
         self.scroll_bottom()

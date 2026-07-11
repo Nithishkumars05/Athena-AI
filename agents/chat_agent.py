@@ -30,7 +30,7 @@ def chat(request: ChatRequest) -> str:
     processed = request_processor.process(request)
 
     task_type = task_router.classify(
-        request.message
+        processed
     )
 
     model_name = model_router.select_model(
@@ -56,7 +56,7 @@ def stream(request: ChatRequest):
     processed = request_processor.process(request)
 
     task_type = task_router.classify(
-        request.message
+        processed
     )
 
     model_name = model_router.select_model(

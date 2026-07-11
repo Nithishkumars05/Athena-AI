@@ -11,6 +11,7 @@ It only classifies the task.
 import re
 
 from core.enums.task_type import TaskType
+from services.request_processor import ProcessedRequest
 
 
 class TaskRouter:
@@ -72,16 +73,21 @@ class TaskRouter:
             ]
         }
 
-
-    def classify(self, message: str) -> TaskType:
+    def classify(
+        self,
+        request: ProcessedRequest,
+    ) -> TaskType:
         """
-        Determine the user's task type.
-
-        Returns:
-            TaskType
+        Determine the task type from the processed request.
         """
 
-        text = message.lower()
+        # -----------------------------
+        # Image uploads always use Vision
+        # -----------------------------
+        if request.file_type == "image":
+            return TaskType.VISION
+
+        text = request.original_message.lower()
 
         for task, keywords in self.rules.items():
 
@@ -89,7 +95,7 @@ class TaskRouter:
 
                 if re.search(
                     rf"\b{re.escape(keyword)}\b",
-                    text
+                    text,
                 ):
                     return task
 

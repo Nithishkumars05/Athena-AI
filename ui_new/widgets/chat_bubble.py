@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (
     QWidget,
     QLabel,
+    QTextBrowser,
     QHBoxLayout,
     QVBoxLayout,
     QFrame
@@ -36,12 +37,46 @@ class ChatBubble(QWidget):
         """)
 
         # Message
-        self.label = QLabel(text)
-        self.label.setWordWrap(True)
-        self.label.setMinimumHeight(20)
-        self.label.setTextInteractionFlags(
-            Qt.TextSelectableByMouse
-        )
+        if is_user:
+
+            self.label = QLabel(text)
+
+            self.label.setWordWrap(True)
+
+            self.label.setTextInteractionFlags(
+        Qt.TextSelectableByMouse
+    )
+
+        else:
+
+            self.label = QTextBrowser()
+
+            self.label.setOpenExternalLinks(True)
+
+            self.label.setFrameShape(
+        QFrame.NoFrame
+    )
+
+            self.label.setReadOnly(True)
+
+            self.label.setHorizontalScrollBarPolicy(
+        Qt.ScrollBarAlwaysOff
+    )
+
+            self.label.setVerticalScrollBarPolicy(
+        Qt.ScrollBarAlwaysOff
+    )
+
+            self.label.setStyleSheet("""
+        QTextBrowser{
+            background:transparent;
+            color:white;
+            border:none;
+            font-size:14px;
+        }
+    """)
+
+            self.label.setMarkdown(text)
 
         # Time
         self.time = QLabel(
@@ -93,14 +128,18 @@ class ChatBubble(QWidget):
 
     def set_text(self, text: str):
 
-        self.label.setText(text)
+        if self.is_user:
 
-        self.label.adjustSize()
+            self.label.setText(text)
+            self.label.adjustSize()
+
+        else:
+
+            self.label.setMarkdown(text)
+            self.label.document().adjustSize()
 
         self.bubble.adjustSize()
-
         self.adjustSize()
-
         self.updateGeometry()
 
         if self.parentWidget():

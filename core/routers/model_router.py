@@ -22,102 +22,112 @@ class ModelRouter:
 
 
     def select_model(
-        self,
-        task_type: TaskType
-    ):
-
+    self,
+    task_type: TaskType
+):
         """
-        Select the best available model.
+    Select the best available model.
 
-        Routing is based on:
-        - AI mode
-        - Task capability
-        - Registered models
-        """
-
+    Routing is based on:
+    - AI mode
+    - Task capability
+    - Registered models
+    """
 
         mode = settings.get_ai_mode()
 
-
-        # --------------------------------
-        # Manual selection mode
-        # --------------------------------
+    # --------------------------------
+    # Manual selection mode
+    # --------------------------------
 
         if mode != "auto":
-
             return settings.get_model()
 
-
-
-        # --------------------------------
-        # Capability mapping
-        # --------------------------------
+    # --------------------------------
+    # Capability mapping
+    # --------------------------------
 
         capability_map = {
 
-            TaskType.CODING:
-                "coding",
+        TaskType.CODING: "coding",
 
-            TaskType.REASONING:
-                "reasoning",
+        TaskType.REASONING: "reasoning",
 
-            TaskType.VISION:
-                "vision",
+        TaskType.VISION: "vision",
 
-            TaskType.MATH:
-                "reasoning",
+        TaskType.MATH: "reasoning",
 
-            TaskType.DOCUMENT:
-                "document",
+        TaskType.DOCUMENT: "document",
 
-            TaskType.CHAT:
-                "chat"
-        }
-
+        TaskType.CHAT: "chat",
+    }
 
         capability = capability_map.get(
-            task_type,
-            "chat"
-        )
+        task_type,
+        "chat"
+    )
 
-
-        # --------------------------------
-        # Find compatible models
-        # --------------------------------
-
-        models = (
-            model_manager
-            .get_models_by_capability(
-                capability
-            )
-        )
-
+        models = model_manager.get_models_by_capability(
+        capability
+    )
 
         if not models:
+            return "qwen3:8b"
 
-            # fallback
-            return (
-                settings.get_model()
-                or "qwen3:8b"
-            )
+    # --------------------------------
+    # Preferred routing
+    # --------------------------------
 
+        if task_type == TaskType.VISION:
 
-        # --------------------------------
-        # Select best candidate
-        # --------------------------------
+        # Prefer offline LLaVA
+            for model in models:
+                if model.name == "llava:latest":
+                    return model.name
+
+        # Fall back to Gemini Vision
+            for model in models:
+                if model.name == "gemini-2.5-flash":
+                    return model.name
+
+        elif task_type == TaskType.CODING:
+
+            for model in models:
+                if model.name == "qwen2.5-coder:7b":
+                    return model.name
+
+        elif task_type in (
+        TaskType.REASONING,
+        TaskType.MATH,
+    ):
+
+            for model in models:
+                if model.name == "qwen3:14b":
+                    return model.name
+
+        elif task_type == TaskType.CHAT:
+
+            for model in models:
+                if model.name == "qwen3:8b":
+                    return model.name
+
+        elif task_type == TaskType.DOCUMENT:
+
+        # Prefer Gemini because it already supports
+        # long-context document understanding.
+            for model in models:
+                if model.name == "gemini-2.5-flash":
+                    return model.name
+
+    # --------------------------------
+    # Generic fallback
+    # --------------------------------
 
         for model in models:
-
             if model.provider == "offline":
-
                 return model.name
 
-
-        # If no offline model exists,
-        # use first available
-
         return models[0].name
-
 
 
 model_router = ModelRouter()
