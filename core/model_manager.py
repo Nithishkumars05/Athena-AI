@@ -117,7 +117,26 @@ class ModelManager:
                     "qwen3:8b"
                 )
             ),
-
+            "llama3.1:8b": ModelInfo(
+    name="llama3.1:8b",
+    display_name="Llama 3.1 8B",
+    provider="offline",
+    capabilities=[
+        "chat",
+        "reasoning"
+    ],
+    description="General purpose local AI model for everyday conversations.",
+    supports_streaming=True,
+    supports_vision=False,
+    recommended_for=[
+        "chat",
+        "general",
+        "reasoning"
+    ],
+    instance=OllamaModel(
+        "llama3.1:8b"
+    )
+),
 
             "qwen2.5-coder:7b": ModelInfo(
                 name="qwen2.5-coder:7b",

@@ -5,3 +5,113 @@
 2026-07-11 16:45:12,224 | INFO | Chat request started
 2026-07-11 16:45:18,585 | INFO | HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
 2026-07-11 16:45:28,282 | INFO | Streaming chat completed
+2026-07-11 16:47:53,313 | INFO | Athena started
+2026-07-11 16:48:02,647 | INFO | Chat request started
+2026-07-11 16:48:02,650 | ERROR | Chat request failed
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\services\workers\chat_worker.py", line 43, in run
+    for chunk in dispatcher.stream_handle(self.request):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\agents\dispatcher.py", line 91, in stream_handle
+    yield from chat_stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 99, in stream_handle
+    yield from stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 88, in stream
+    yield from model_manager.stream_generate_with_model(
+    ...<5 lines>...
+    )
+  File "E:\Project\AI Engineer\core\model_manager.py", line 310, in stream_generate_with_model
+    raise ValueError(
+        f"Unknown model: {model_name}"
+    )
+ValueError: Unknown model: llama3.1:8b
+2026-07-11 16:48:12,648 | INFO | Chat request started
+2026-07-11 16:48:12,648 | ERROR | Chat request failed
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\services\workers\chat_worker.py", line 43, in run
+    for chunk in dispatcher.stream_handle(self.request):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\agents\dispatcher.py", line 91, in stream_handle
+    yield from chat_stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 99, in stream_handle
+    yield from stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 88, in stream
+    yield from model_manager.stream_generate_with_model(
+    ...<5 lines>...
+    )
+  File "E:\Project\AI Engineer\core\model_manager.py", line 310, in stream_generate_with_model
+    raise ValueError(
+        f"Unknown model: {model_name}"
+    )
+ValueError: Unknown model: llama3.1:8b
+2026-07-11 16:48:29,799 | INFO | Chat request started
+2026-07-11 16:48:46,914 | INFO | HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2026-07-11 16:48:46,916 | ERROR | Chat request failed
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\services\workers\chat_worker.py", line 47, in run
+        self.signals.chunk_received.emit(
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        chunk
+        ^^^^^
+    )
+    ^
+RuntimeError: Signal source has been deleted
+2026-07-11 16:53:27,240 | INFO | Athena started
+2026-07-11 16:53:42,431 | INFO | Chat request started
+2026-07-11 16:53:45,498 | INFO | HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2026-07-11 16:54:56,973 | INFO | Streaming chat completed
+2026-07-11 16:59:19,498 | INFO | Athena started
+2026-07-11 16:59:38,199 | INFO | Chat request started
+2026-07-11 16:59:48,368 | INFO | HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2026-07-11 16:59:59,444 | INFO | Streaming chat completed
+2026-07-11 17:00:06,834 | INFO | Chat request started
+2026-07-11 17:00:07,558 | INFO | HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2026-07-11 17:00:14,425 | INFO | Streaming chat completed
+2026-07-11 17:05:15,452 | INFO | Athena started
+2026-07-11 17:05:19,985 | INFO | Chat request started
+2026-07-11 17:05:19,987 | ERROR | Chat request failed
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\services\workers\chat_worker.py", line 43, in run
+    for chunk in dispatcher.stream_handle(self.request):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\agents\dispatcher.py", line 91, in stream_handle
+    yield from chat_stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 99, in stream_handle
+    yield from stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 88, in stream
+    yield from model_manager.stream_generate_with_model(
+    ...<5 lines>...
+    )
+  File "E:\Project\AI Engineer\core\model_manager.py", line 333, in stream_generate_with_model
+    yield from model_info.instance.stream_generate(
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        user_name=user_name,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        image_path=image_path,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+TypeError: GeminiModel.stream_generate() got an unexpected keyword argument 'image_path'
+2026-07-11 17:06:50,730 | INFO | Athena started
+2026-07-11 17:06:56,498 | INFO | Chat request started
+2026-07-11 17:06:56,501 | INFO | AFC is enabled with max remote calls: 10.
+2026-07-11 17:06:57,727 | INFO | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse "HTTP/1.1 200 OK"
+2026-07-11 17:06:57,739 | INFO | Streaming chat completed
+2026-07-11 17:08:08,225 | INFO | Athena started
+2026-07-11 17:08:12,684 | INFO | Chat request started
+2026-07-11 17:08:12,687 | INFO | AFC is enabled with max remote calls: 10.
+2026-07-11 17:08:14,908 | INFO | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse "HTTP/1.1 200 OK"
+2026-07-11 17:08:19,551 | INFO | Streaming chat completed
+2026-07-11 17:08:46,508 | INFO | Chat request started
+2026-07-11 17:08:53,941 | INFO | HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2026-07-11 17:09:25,726 | INFO | Streaming chat completed
+2026-07-11 17:10:02,507 | INFO | Chat request started
+2026-07-11 17:10:02,510 | INFO | AFC is enabled with max remote calls: 10.
+2026-07-11 17:10:04,927 | INFO | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse "HTTP/1.1 200 OK"
+2026-07-11 17:10:05,422 | INFO | Streaming chat completed
+2026-07-11 17:11:47,233 | INFO | Athena started
+2026-07-11 17:12:05,253 | INFO | Chat request started
+2026-07-11 17:12:05,256 | INFO | AFC is enabled with max remote calls: 10.
+2026-07-11 17:12:12,307 | INFO | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse "HTTP/1.1 200 OK"
+2026-07-11 17:12:15,855 | INFO | Streaming chat completed
