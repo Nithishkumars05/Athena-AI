@@ -1,0 +1,16 @@
+{
+    "id": "4b431cdd-c72b-49d4-b6e3-92190561862b",
+    "title": "What Is Gyroscope",
+    "created_at": "2026-07-11T16:40:42.414568",
+    "updated_at": "2026-07-11T16:45:28.272473",
+    "messages": [
+        {
+            "role": "User",
+            "content": "what is gyroscope"
+        },
+        {
+            "role": "Athena",
+            "content": " # Gyroscope\n\nA **gyroscope** is a device that measures the rotational rate of an object in three dimensions. It is often used in aviation, space exploration, and other applications where precise knowledge of the object's orientation is required.\n\nGyroscopes work by detecting changes in the angular velocity of an object. This information can be used to determine the orientation of the object with respect to a reference frame. Gyroscopes are often used in conjunction with accelerometers to provide more complete information about the motion of an object. "
+        }
+    ]
+}

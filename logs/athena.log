@@ -1,0 +1,7 @@
+2026-07-11 16:14:48,843 | INFO | Athena started
+2026-07-11 16:19:11,580 | INFO | Athena started
+2026-07-11 16:40:38,127 | INFO | Athena started
+2026-07-11 16:45:04,521 | INFO | Athena started
+2026-07-11 16:45:12,224 | INFO | Chat request started
+2026-07-11 16:45:18,585 | INFO | HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2026-07-11 16:45:28,282 | INFO | Streaming chat completed

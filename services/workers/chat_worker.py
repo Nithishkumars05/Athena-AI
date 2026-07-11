@@ -2,7 +2,7 @@ from PySide6.QtCore import QObject, QRunnable, Signal, Slot
 
 from agents.dispatcher import dispatcher
 from models.chat_request import ChatRequest
-
+from core.logger import logger
 import traceback
 
 
@@ -27,41 +27,56 @@ class ChatWorker(QRunnable):
         self.signals = WorkerSignals()
 
     @Slot()
+    @Slot()
     def run(self):
 
-        try:
-            self.signals.started.emit()
+        self.signals.started.emit()
 
-            # -----------------------------
-            # Streaming Mode
-            # -----------------------------
+        try:
+
+            logger.info("Chat request started")
+
             if self.streaming:
 
-                full_response = ""
+                response = ""
 
-                for chunk in dispatcher.stream_handle(
-                    self.request
-                ):
-                    full_response += chunk
-                    self.signals.chunk_received.emit(chunk)
+                for chunk in dispatcher.stream_handle(self.request):
 
-                self.signals.finished.emit(full_response)
+                    response += chunk
 
-            # -----------------------------
-            # Normal Mode
-            # -----------------------------
+                    self.signals.chunk_received.emit(
+                    chunk
+                )
+
+                logger.info(
+                "Streaming chat completed"
+            )
+
+                self.signals.finished.emit(
+                response
+            )
+
             else:
 
                 response = dispatcher.handle(
-                    self.request
-                )
+                self.request
+            )
 
-                self.signals.finished.emit(response)
+                logger.info(
+                "Chat request completed"
+            )
 
-        except Exception:
+                self.signals.finished.emit(
+                response
+            )
 
-            error = traceback.format_exc()
 
-            print(error)
+        except Exception as e:
 
-            self.signals.error.emit(error)
+            logger.exception(
+            "Chat request failed"
+        )
+
+            self.signals.error.emit(
+            str(e)
+        )
