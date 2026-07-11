@@ -115,3 +115,431 @@ TypeError: GeminiModel.stream_generate() got an unexpected keyword argument 'ima
 2026-07-11 17:12:05,256 | INFO | AFC is enabled with max remote calls: 10.
 2026-07-11 17:12:12,307 | INFO | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse "HTTP/1.1 200 OK"
 2026-07-11 17:12:15,855 | INFO | Streaming chat completed
+2026-07-11 20:21:45,174 | INFO | Athena started
+2026-07-11 20:22:05,888 | INFO | Chat request started
+2026-07-11 20:22:05,901 | INFO | AFC is enabled with max remote calls: 10.
+2026-07-11 20:22:20,749 | INFO | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse "HTTP/1.1 200 OK"
+2026-07-11 20:22:24,009 | INFO | Streaming chat completed
+2026-07-11 20:29:16 | INFO | ============================================================
+2026-07-11 20:29:16 | INFO | Athena AI started successfully.
+2026-07-11 20:29:16 | INFO | ============================================================
+2026-07-11 20:34:03 | INFO | ============================================================
+2026-07-11 20:34:03 | INFO | Athena AI started successfully.
+2026-07-11 20:34:03 | INFO | ============================================================
+2026-07-11 20:34:26 | INFO | Request received | User=User | Streaming=True | File=True
+2026-07-11 20:34:26 | INFO | Chat request started
+2026-07-11 20:34:50 | ERROR | Chat request failed
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\services\workers\chat_worker.py", line 47, in run
+        self.signals.chunk_received.emit(
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        chunk
+        ^^^^^
+    )
+    ^
+RuntimeError: Signal source has been deleted
+2026-07-11 20:36:24 | INFO | ============================================================
+2026-07-11 20:36:24 | INFO | Athena AI started successfully.
+2026-07-11 20:36:24 | INFO | ============================================================
+2026-07-11 20:36:49 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-11 20:36:49 | INFO | Chat request started
+2026-07-11 20:37:01 | INFO | Streaming chat completed
+2026-07-11 20:54:25 | INFO | ============================================================
+2026-07-11 20:54:25 | INFO | Athena AI started successfully.
+2026-07-11 20:54:25 | INFO | ============================================================
+2026-07-11 20:54:38 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-11 20:54:38 | INFO | Chat request started
+2026-07-11 20:54:38 | INFO | Task detected | CHAT | Reason=Default
+2026-07-11 20:54:38 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-11 20:54:38 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-11 20:54:38 | ERROR | Chat request failed
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\NITHISHKUMAR\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\services\workers\chat_worker.py", line 43, in run
+    for chunk in dispatcher.stream_handle(self.request):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\agents\dispatcher.py", line 91, in stream_handle
+    yield from chat_stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 99, in stream_handle
+    yield from stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 88, in stream
+    yield from model_manager.stream_generate_with_model(
+    ...<5 lines>...
+    )
+  File "E:\Project\AI Engineer\core\model_manager.py", line 395, in stream_generate_with_model
+            yield from model_info.instance.stream_generate(
+    ...<4 lines>...
+    )
+  File "E:\Project\AI Engineer\models\gemini_model.py", line 157, in stream_generate
+    for chunk in stream:
+                 ^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\models.py", line 6709, in generate_content_stream
+    for chunk in response:
+                 ^^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\models.py", line 5062, in _generate_content_stream
+    for response in self._api_client.request_streamed(
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        'post', path, request_dict, http_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\_api_client.py", line 1635, in request_streamed
+    session_response = self._request(http_request, http_options, stream=True)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\_api_client.py", line 1411, in _request
+    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 371, in iter
+    result = action(retry_state)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ~~~~~~~~~~~~~~~~~^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\NITHISHKUMAR\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\_base.py", line 447, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\NITHISHKUMAR\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\_base.py", line 396, in __get_result
+    raise self._exception
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\_api_client.py", line 1387, in _request_once
+    response = self._httpx_client.send(httpx_request, stream=stream)  # type: ignore[union-attr]
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\NITHISHKUMAR\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-07-11 20:54:42 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-11 20:54:42 | INFO | Chat request started
+2026-07-11 20:54:42 | INFO | Task detected | CHAT | Reason=Default
+2026-07-11 20:54:42 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-11 20:54:42 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-11 20:54:42 | ERROR | Chat request failed
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\NITHISHKUMAR\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\services\workers\chat_worker.py", line 43, in run
+    for chunk in dispatcher.stream_handle(self.request):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\agents\dispatcher.py", line 91, in stream_handle
+    yield from chat_stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 99, in stream_handle
+    yield from stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 88, in stream
+    yield from model_manager.stream_generate_with_model(
+    ...<5 lines>...
+    )
+  File "E:\Project\AI Engineer\core\model_manager.py", line 395, in stream_generate_with_model
+            yield from model_info.instance.stream_generate(
+    ...<4 lines>...
+    )
+  File "E:\Project\AI Engineer\models\gemini_model.py", line 157, in stream_generate
+    for chunk in stream:
+                 ^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\models.py", line 6709, in generate_content_stream
+    for chunk in response:
+                 ^^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\models.py", line 5062, in _generate_content_stream
+    for response in self._api_client.request_streamed(
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        'post', path, request_dict, http_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\_api_client.py", line 1635, in request_streamed
+    session_response = self._request(http_request, http_options, stream=True)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\_api_client.py", line 1411, in _request
+    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 371, in iter
+    result = action(retry_state)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ~~~~~~~~~~~~~~~~~^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\NITHISHKUMAR\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\_base.py", line 447, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\NITHISHKUMAR\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\_base.py", line 396, in __get_result
+    raise self._exception
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\_api_client.py", line 1387, in _request_once
+    response = self._httpx_client.send(httpx_request, stream=stream)  # type: ignore[union-attr]
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\NITHISHKUMAR\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-07-11 20:54:54 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-11 20:54:54 | INFO | Chat request started
+2026-07-11 20:54:54 | INFO | Task detected | CHAT | Reason=Default
+2026-07-11 20:54:54 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-11 20:54:54 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-11 20:54:56 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-11 20:54:56 | INFO | Chat request started
+2026-07-11 20:54:56 | INFO | Task detected | CHAT | Reason=Default
+2026-07-11 20:54:56 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-11 20:54:56 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-11 20:54:57 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-11 20:54:57 | INFO | Streaming chat completed
+2026-07-11 20:54:58 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-11 20:54:58 | INFO | Streaming chat completed
+2026-07-11 20:59:21 | INFO | ============================================================
+2026-07-11 20:59:21 | INFO | Athena AI started successfully.
+2026-07-11 20:59:21 | INFO | ============================================================
+2026-07-11 20:59:34 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-11 20:59:34 | INFO | Chat request started
+2026-07-11 20:59:34 | INFO | Task detected | CHAT | Reason=Default
+2026-07-11 20:59:34 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-11 20:59:34 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-11 20:59:34 | ERROR | Chat request failed
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\NITHISHKUMAR\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\services\workers\chat_worker.py", line 43, in run
+    for chunk in dispatcher.stream_handle(self.request):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\agents\dispatcher.py", line 91, in stream_handle
+    yield from chat_stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 99, in stream_handle
+    yield from stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 88, in stream
+    yield from model_manager.stream_generate_with_model(
+    ...<5 lines>...
+    )
+  File "E:\Project\AI Engineer\core\model_manager.py", line 395, in stream_generate_with_model
+            yield from model_info.instance.stream_generate(
+    ...<4 lines>...
+    )
+  File "E:\Project\AI Engineer\models\gemini_model.py", line 157, in stream_generate
+    for chunk in stream:
+                 ^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\models.py", line 6709, in generate_content_stream
+    for chunk in response:
+                 ^^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\models.py", line 5062, in _generate_content_stream
+    for response in self._api_client.request_streamed(
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        'post', path, request_dict, http_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\_api_client.py", line 1635, in request_streamed
+    session_response = self._request(http_request, http_options, stream=True)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\_api_client.py", line 1411, in _request
+    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 371, in iter
+    result = action(retry_state)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ~~~~~~~~~~~~~~~~~^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\NITHISHKUMAR\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\_base.py", line 447, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\NITHISHKUMAR\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\_base.py", line 396, in __get_result
+    raise self._exception
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\tenacity\__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\google\genai\_api_client.py", line 1387, in _request_once
+    response = self._httpx_client.send(httpx_request, stream=stream)  # type: ignore[union-attr]
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\NITHISHKUMAR\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-07-11 21:04:47 | INFO | ============================================================
+2026-07-11 21:04:47 | INFO | Athena AI started successfully.
+2026-07-11 21:04:47 | INFO | ============================================================
+2026-07-11 21:05:20 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-11 21:05:20 | INFO | Chat request started
+2026-07-11 21:05:20 | INFO | Task detected | CHAT | Reason=Default
+2026-07-11 21:05:20 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-11 21:05:20 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-11 21:05:20 | WARNING | gemini-2.5-flash failed ([Errno 11001] getaddrinfo failed). Switching to qwen3:8b.
+2026-07-11 21:06:01 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-11 21:06:01 | INFO | Streaming chat completed
+2026-07-11 21:17:29 | INFO | ============================================================
+2026-07-11 21:17:29 | INFO | Athena AI started successfully.
+2026-07-11 21:17:29 | INFO | ============================================================
+2026-07-11 21:19:41 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-11 21:19:41 | INFO | Chat request started
+2026-07-11 21:19:42 | INFO | Task detected | CHAT | Reason=Default
+2026-07-11 21:19:42 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-11 21:19:42 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-11 21:19:42 | WARNING | gemini-2.5-flash failed ([Errno 11001] getaddrinfo failed). Switching to qwen3:8b.
+2026-07-11 21:20:12 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-11 21:20:12 | INFO | Streaming chat completed
+2026-07-11 21:36:07 | INFO | ============================================================
+2026-07-11 21:36:07 | INFO | Athena AI started successfully.
+2026-07-11 21:36:07 | INFO | ============================================================
+2026-07-11 21:36:29 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-11 21:36:29 | INFO | Chat request started
+2026-07-11 21:36:29 | INFO | Task detected | CHAT | Reason=Default
+2026-07-11 21:36:29 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-11 21:36:29 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-11 21:36:29 | WARNING | gemini-2.5-flash failed ([Errno 11001] getaddrinfo failed). Switching to qwen3:8b
+2026-07-11 21:37:05 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-11 21:37:05 | INFO | Streaming chat completed
+2026-07-11 21:37:07 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-11 21:37:07 | INFO | Chat request started
+2026-07-11 21:37:07 | INFO | Task detected | CHAT | Reason=Default
+2026-07-11 21:37:07 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-11 21:37:07 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-11 21:37:10 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-11 21:37:10 | INFO | Streaming chat completed

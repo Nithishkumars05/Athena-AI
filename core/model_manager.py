@@ -7,7 +7,7 @@ all available AI models.
 
 from models.gemini_model import GeminiModel
 from models.ollama_model import OllamaModel
-
+from core.logger import logger
 from app.settings import settings
 from core.model_info import ModelInfo
 
@@ -196,6 +196,13 @@ class ModelManager:
                 )
             )
         }
+        self.fallback_models = {
+    "gemini-2.5-flash": "qwen3:8b",
+    "llava:latest": "gemini-2.5-flash",
+    "qwen3:14b": "qwen3:8b",
+    "qwen2.5-coder:7b": "gemini-2.5-flash",
+    "llama3.1:8b": "qwen3:8b",
+}
 
 
     # ------------------------------------
@@ -205,6 +212,108 @@ class ModelManager:
     def get_model(self, model_name: str):
 
         return self.models.get(model_name)
+    
+    def get_fallback_model(self, model_name):
+        return self.fallback_models.get(model_name)
+    
+    def _run_generate(
+    self,
+    model_name: str,
+    user_name: str,
+    prompt: str,
+    original_message: str | None = None,
+    image_path: str | None = None,
+):
+        """
+    Executes a normal (non-streaming) generation with
+    automatic fallback.
+    """
+
+        model_info = self.get_model(model_name)
+
+        if model_info is None:
+            raise ValueError(f"Unknown model: {model_name}")
+
+        try:
+            return model_info.instance.generate(
+            user_name=user_name,
+            prompt=prompt,
+            original_message=original_message,
+            image_path=image_path,
+        )
+
+        except Exception as e:
+
+            fallback = self.get_fallback_model(model_name)
+
+            if fallback is None:
+                raise
+
+            logger.warning(
+            f"{model_name} failed ({e}). "
+            f"Switching to {fallback}"
+        )
+
+            fallback_info = self.get_model(fallback)
+
+            if fallback_info is None:
+                raise
+
+            return fallback_info.instance.generate(
+            user_name=user_name,
+            prompt=prompt,
+            original_message=original_message,
+            image_path=image_path,
+        )
+
+    def _run_stream(
+    self,
+    model_name: str,
+    user_name: str,
+    prompt: str,
+    original_message: str | None = None,
+    image_path: str | None = None,
+):
+        """
+    Executes streaming generation with automatic fallback.
+    """
+
+        model_info = self.get_model(model_name)
+
+        if model_info is None:
+            raise ValueError(f"Unknown model: {model_name}")
+
+        try:
+            yield from model_info.instance.stream_generate(
+            user_name=user_name,
+            prompt=prompt,
+            original_message=original_message,
+            image_path=image_path,
+        )
+
+        except Exception as e:
+
+            fallback = self.get_fallback_model(model_name)
+
+            if fallback is None:
+                raise
+
+            logger.warning(
+            f"{model_name} failed ({e}). "
+            f"Switching to {fallback}"
+        )
+
+            fallback_info = self.get_model(fallback)
+
+            if fallback_info is None:
+                raise
+
+            yield from fallback_info.instance.stream_generate(
+            user_name=user_name,
+            prompt=prompt,
+            original_message=original_message,
+            image_path=image_path,
+        )
 
 
     def get_all_models(self):
@@ -241,21 +350,25 @@ class ModelManager:
         original_message: str | None = None,
     ):
 
-        mode = settings.get_ai_mode()
         selected_model = settings.get_model()
 
-        model_info = self.get_model(selected_model)
+        logger.info(
+    f"Generation started | Model={selected_model} | Streaming=False"
+)
 
-        if model_info is None:
-            raise ValueError(
-                f"Unknown model: {selected_model}"
-            )
+        response = self._run_generate(
+    model_name=selected_model,
+    user_name=user_name,
+    prompt=prompt,
+    original_message=original_message,
+)
 
-        return model_info.instance.generate(
-            user_name=user_name,
-            prompt=prompt,
-            original_message=original_message,
-        )
+        logger.info(
+    f"Generation completed | Model={selected_model}"
+)
+
+
+        return response
 
 
     # ------------------------------------
@@ -263,29 +376,28 @@ class ModelManager:
     # ------------------------------------
 
     def stream_generate(
-        self,
-        user_name: str,
-        prompt: str,
-        original_message: str | None = None,
-    ):
+    self,
+    user_name: str,
+    prompt: str,
+    original_message: str | None = None,
+):
 
-        mode = settings.get_ai_mode()
         selected_model = settings.get_model()
 
-        model_info = self.get_model(selected_model)
+        logger.info(
+    f"Streaming started | Model={selected_model}"
+)
 
-        if model_info is None:
-            raise ValueError(
-                f"Unknown model: {selected_model}"
-            )
+        yield from self._run_stream(
+    model_name=selected_model,
+    user_name=user_name,
+    prompt=prompt,
+    original_message=original_message,
+)
 
-        yield from model_info.instance.stream_generate(
-            user_name=user_name,
-            prompt=prompt,
-            original_message=original_message,
-        )
-
-
+        logger.info(
+    f"Streaming completed | Model={selected_model}"
+)
     # ------------------------------------
     # Direct Model Generation
     # ------------------------------------
@@ -299,43 +411,51 @@ class ModelManager:
         image_path: str | None = None,
     ):
 
-        model_info = self.get_model(model_name)
+        
 
-        if model_info is None:
-            raise ValueError(
-                f"Unknown model: {model_name}"
-            )
+        logger.info(
+    f"Generation started | Model={model_name}"
+)
 
-        return model_info.instance.generate(
-            user_name=user_name,
-            prompt=prompt,
-            original_message=original_message,
-            image_path=image_path,
-        )
+        response = self._run_generate(
+    model_name=model_name,
+    user_name=user_name,
+    prompt=prompt,
+    original_message=original_message,
+    image_path=image_path,
+)
+
+        logger.info(
+    f"Generation completed | Model={model_name}"
+)
+
+        return response
 
 
     def stream_generate_with_model(
-        self,
-        model_name: str,
-        user_name: str,
-        prompt: str,
-        original_message: str | None = None,
-        image_path: str | None = None,
-    ):
+    self,
+    model_name: str,
+    user_name: str,
+    prompt: str,
+    original_message: str | None = None,
+    image_path: str | None = None,
+):
 
         model_info = self.get_model(model_name)
 
-        if model_info is None:
-            raise ValueError(
-                f"Unknown model: {model_name}"
-            )
+        logger.info(
+        f"Streaming started | Model={model_name}"
+    )
 
-        yield from model_info.instance.stream_generate(
-            user_name=user_name,
-            prompt=prompt,
-            original_message=original_message,
-            image_path=image_path,
-        )
+        yield from self._run_stream(
+    model_name=model_name,
+    user_name=user_name,
+    prompt=prompt,
+    original_message=original_message,
+    image_path=image_path,
+)
 
-
+        logger.info(
+    f"Streaming completed | Model={model_name}"
+)
 model_manager = ModelManager()

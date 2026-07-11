@@ -1,5 +1,5 @@
 from PySide6.QtCore import QThreadPool
-
+from core.logger import logger
 from models.chat_request import ChatRequest
 from services.workers.chat_worker import ChatWorker
 from models.chat_request import ChatRequest
@@ -29,6 +29,12 @@ class ChatService:
     message=message,
     file_path=file_path,
     conversation_id=conversation_id,
+)
+        logger.info(
+    f"Request received | "
+    f"User={user_name} | "
+    f"Streaming=False | "
+    f"File={file_path is not None}"
 )
 
         worker = ChatWorker(
@@ -66,6 +72,12 @@ class ChatService:
     file_path=file_path,
     conversation_id=conversation_id,
 
+)
+        logger.info(
+    f"Request received | "
+    f"User={user_name} | "
+    f"Streaming=True | "
+    f"File={file_path is not None}"
 )
 
         worker = ChatWorker(

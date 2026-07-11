@@ -1,5 +1,5 @@
 {
-    "ai_mode": "auto",
+    "ai_mode": "cloud",
     "model": "gemini-2.5-flash",
     "temperature": 0.53,
     "history": 30
