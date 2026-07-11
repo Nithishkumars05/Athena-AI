@@ -135,3 +135,34 @@ class ConversationStore:
             key=lambda x: x["updated_at"],
             reverse=True
         )
+    
+    def search(self, query: str):
+
+        query = query.lower().strip()
+
+        if not query:
+            return self.list()
+
+        results = []
+
+        for item in self.list():
+
+            conversation = self.load(item["id"])
+
+            if conversation is None:
+                continue
+
+        # Search title
+            if query in conversation.title.lower():
+                results.append(item)
+                continue
+
+        # Search messages
+            for message in conversation.messages:
+
+                if query in message["content"].lower():
+
+                    results.append(item)
+                    break
+
+        return results

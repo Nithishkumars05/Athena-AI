@@ -33,7 +33,11 @@ class ConversationService:
 
     def get_active_conversation(self):
         return self.active_conversation
-
+    def search_conversations(self, query: str):
+        """
+    Search conversations by title or message content.
+    """
+        return self.store.search(query)
 
     def new_conversation(self):
         self.active_conversation = self.store.create()
