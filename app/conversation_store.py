@@ -36,7 +36,7 @@ class ConversationStore:
 
     def _save_index(self, index):
         with open(self.index_file, "w", encoding="utf-8") as f:
-            json.dump(index, f, indent=4)
+            json.dump(index, f, indent=4,ensure_ascii=False,)
 
     # ---------------------------------------------------------
 

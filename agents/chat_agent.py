@@ -23,8 +23,7 @@ from services.request_processor import request_processor
 from core.model_manager import model_manager
 from core.routers.task_router import task_router
 from core.routers.model_router import model_router
-from core.conversation_manager import conversation_manager
-from memory.conversation_memory import conversation_memory
+from services.conversation_service import conversation_service
 
 def chat(request: ChatRequest) -> str:
 
@@ -49,40 +48,31 @@ def chat(request: ChatRequest) -> str:
 
 def handle(request: ChatRequest) -> str:
 
-    # Create a conversation if this is a new chat
+    # Create new conversation if needed
     if request.conversation_id is None:
-        conversation = conversation_manager.new_conversation()
+        conversation = conversation_service.new_conversation()
         request.conversation_id = conversation.id
-    else:
-        conversation_manager.set_current(request.conversation_id)
 
-    # Save the user's message
-    conversation_manager.add_message(
-        role="user",
-        content=request.message,
-        conversation_id=request.conversation_id,
+
+    # Save user message
+    conversation_service.save_user_message(
+        user_name=request.user_name,
+        message=request.message,
     )
 
-    # Generate the response
+
+    # Generate response
     response = chat(request)
 
-    # Save the assistant's reply
-    conversation_manager.add_message(
-        role="assistant",
-        content=response,
-        conversation_id=request.conversation_id,
+
+    # Save Athena response
+    conversation_service.save_ai_message(
+        user_name=request.user_name,
+        message=response,
     )
 
-    # Persist to disk
-    conversation = conversation_manager.get_conversation(
-        request.conversation_id
-)
-
-    conversation_memory.save(conversation)
 
     return response
-
-
 def stream(request: ChatRequest):
 
     processed = request_processor.process(request)
