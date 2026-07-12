@@ -1,0 +1,27 @@
+{
+    "id": "dcd8d2af-7734-4680-a515-67c8fc165ef5",
+    "title": "Hello",
+    "created_at": "2026-07-11T22:11:07.364327",
+    "updated_at": "2026-07-11T22:11:15.987245",
+    "messages": [
+        {
+            "role": "User",
+            "content": "hello"
+        },
+        {
+            "role": "User",
+            "content": "hello"
+        },
+        {
+            "role": "Athena",
+            "content": "Hello there! It's a pleasure to connect with you. How can I assist you today in your AI engineering journey?"
+        },
+        {
+            "role": "Athena",
+            "content": "Hello there! It's a pleasure to connect with you. How can I assist you today in your AI engineering journey?"
+        }
+    ],
+    "pinned": false,
+    "folder": "General",
+    "tags": []
+}

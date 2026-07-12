@@ -2,7 +2,10 @@
     "id": "5ac9d066-04b1-4f14-b300-e492d20e9fb0",
     "title": "New Chat",
     "created_at": "2026-07-11T12:46:10.762681",
-    "updated_at": "2026-07-11T21:58:40.148413",
+    "updated_at": "2026-07-12T10:39:58.817309",
+    "pinned": true,
+    "folder": "General",
+    "tags": [],
     "messages": [
         {
             "role": "Athena",
@@ -32,8 +35,5 @@
             "role": "Athena",
             "content": "Hello again! It seems we're having a bit of a start-up with our conversation. Is there a specific question you have, or a topic you'd like to explore? I'm ready to assist you with any inquiries you might have!"
         }
-    ],
-    "pinned": false,
-    "folder": "General",
-    "tags": []
+    ]
 }

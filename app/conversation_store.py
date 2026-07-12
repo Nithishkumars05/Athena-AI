@@ -122,60 +122,25 @@ class ConversationStore:
     # =====================================================
 
 
-    def create(
-        self,
-        title="New Chat"
-    ):
+    # =====================================================
+# Create
+# =====================================================
 
+    def create(
+    self,
+    title="New Chat"
+):
 
         conversation = Conversation(
+        id=str(uuid.uuid4()),
+        title=title,
+        pinned=False,
+        folder="General"
+    )
 
-            id=str(
-                uuid.uuid4()
-            ),
-
-            title=title
-
-        )
-
-
-        self.save(
-            conversation
-        )
-
-
-        index = self._load_index()
-
-
-        index.append({
-
-            "id":
-                conversation.id,
-
-            "title":
-                conversation.title,
-
-            "updated_at":
-                conversation.updated_at,
-
-            "pinned":
-                conversation.pinned,
-
-            "folder":
-                conversation.folder
-
-        })
-
-
-        self._save_index(
-            index
-        )
-
+        self.save(conversation)
 
         return conversation
-
-
-
     # =====================================================
     # Save
     # =====================================================
@@ -187,7 +152,7 @@ class ConversationStore:
     ):
 
 
-        conversation.touch()
+        conversation.updated_at = datetime.now().isoformat()
 
 
         path = (
@@ -320,11 +285,22 @@ class ConversationStore:
             "folder",
             "General"
         )
+        data.setdefault(
+    "archived",
+    False
+)
 
         data.setdefault(
-            "tags",
-            []
-        )
+    "deleted",
+    False
+)
+
+        data.setdefault(
+    "tags",
+    []
+)
+
+        
 
 
         return Conversation(

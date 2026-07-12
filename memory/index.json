@@ -41,8 +41,8 @@
     },
     {
         "id": "3ad98c1f-db8e-455a-b7c3-d953f2565a4c",
-        "title": "Hello",
-        "updated_at": "2026-07-11T22:03:03.558098",
+        "title": "j",
+        "updated_at": "2026-07-12T10:39:53.421046",
         "pinned": false,
         "folder": "General"
     },
@@ -59,15 +59,15 @@
     {
         "id": "dc5619d7-2541-4762-8893-6a813f547421",
         "title": "Explain This Image",
-        "updated_at": "2026-07-11T21:59:47.413460",
+        "updated_at": "2026-07-11T22:08:51.984109",
         "pinned": true,
         "folder": "General"
     },
     {
         "id": "5ac9d066-04b1-4f14-b300-e492d20e9fb0",
         "title": "New Chat",
-        "updated_at": "2026-07-11T21:58:40.148413",
-        "pinned": false,
+        "updated_at": "2026-07-12T10:39:58.817309",
+        "pinned": true,
         "folder": "General"
     },
     {
@@ -91,15 +91,22 @@
         "updated_at": "2026-07-11T21:37:10.201838"
     },
     {
-        "id": "aaca2d3c-f72d-4632-a912-714e1e8171c9",
-        "title": "Hello Athena Which Model Are",
-        "updated_at": "2026-07-11T21:59:53.199325",
-        "pinned": false,
-        "folder": "hello"
-    },
-    {
         "id": "c5dada9d-4cb4-45d3-9f7e-f417dffc53ae",
         "title": "Helloo",
         "updated_at": "2026-07-11T21:54:07.153756"
+    },
+    {
+        "id": "dcd8d2af-7734-4680-a515-67c8fc165ef5",
+        "title": "Hello",
+        "updated_at": "2026-07-11T22:11:15.987245",
+        "pinned": false,
+        "folder": "General"
+    },
+    {
+        "id": "dcd8d2af-7734-4680-a515-67c8fc165ef5",
+        "title": "New Chat",
+        "updated_at": "2026-07-11T22:11:07.364345",
+        "pinned": false,
+        "folder": "General"
     }
 ]

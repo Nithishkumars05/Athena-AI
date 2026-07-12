@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -8,31 +10,29 @@ from PySide6.QtWidgets import (
     QInputDialog,
     QMessageBox,
     QLineEdit,
+    QLabel,
 )
 
-from PySide6.QtCore import Signal, Qt
+from PySide6.QtCore import (
+    Signal,
+    Qt,
+)
 
 from services.conversation_service import conversation_service
-
+from utils.date_utils import group_from_date
 
 
 class ConversationSidebar(QWidget):
-
 
     conversation_selected = Signal(str)
 
     conversation_deleted = Signal(str)
 
-
-
     def __init__(self):
 
         super().__init__()
 
-
-        self.layout = QVBoxLayout(
-            self
-        )
+        self.layout = QVBoxLayout(self)
 
         self.layout.setContentsMargins(
             10,
@@ -41,283 +41,281 @@ class ConversationSidebar(QWidget):
             10
         )
 
-
-        # ======================================
+        # =============================
         # Search
-        # ======================================
+        # =============================
 
         self.search_box = QLineEdit()
-
 
         self.search_box.setPlaceholderText(
             "Search conversations..."
         )
 
-
         self.search_box.textChanged.connect(
             self.search_conversations
         )
-
 
         self.layout.addWidget(
             self.search_box
         )
 
-
-
-        # ======================================
+        # =============================
         # New Chat
-        # ======================================
+        # =============================
 
         self.new_chat_btn = QPushButton(
             "+ New Chat"
         )
 
-
-        self.new_chat_btn.setFocusPolicy(
-            Qt.NoFocus
+        self.new_chat_btn.clicked.connect(
+            self.create_new_chat
         )
-
 
         self.layout.addWidget(
             self.new_chat_btn
         )
 
-
-
-        # ======================================
+        # =============================
         # Conversation List
-        # ======================================
+        # =============================
 
         self.chat_list = QListWidget()
-
 
         self.chat_list.setFocusPolicy(
             Qt.NoFocus
         )
 
-
-        self.layout.addWidget(
-            self.chat_list
-        )
-
-
-
-        # ======================================
-        # Signals
-        # ======================================
-
-        self.new_chat_btn.clicked.connect(
-            self.create_new_chat
-        )
-
-
         self.chat_list.itemClicked.connect(
             self.on_chat_selected
         )
-
 
         self.chat_list.setContextMenuPolicy(
             Qt.CustomContextMenu
         )
 
-
         self.chat_list.customContextMenuRequested.connect(
             self.show_context_menu
         )
 
-
+        self.layout.addWidget(
+            self.chat_list
+        )
 
         self.refresh()
 
-
-
-    # =====================================================
+        # =====================================================
     # Refresh
     # =====================================================
 
-
     def refresh(self):
 
+        current_id = None
+
+        current_item = self.chat_list.currentItem()
+
+        if current_item:
+
+            current_id = current_item.data(
+                Qt.UserRole
+            )
 
         self.chat_list.clear()
-
 
         conversations = (
             conversation_service.list_conversations()
         )
 
+        groups = defaultdict(list)
 
         for conversation in conversations:
 
-
-            title = conversation["title"]
-
-
             if conversation.get(
-                "pinned",
+                "archived",
                 False
             ):
+                continue
 
-                title = "📌 " + title
-
-
-
-            item = QListWidgetItem(
-                title
+            section = group_from_date(
+                conversation["updated_at"]
             )
 
-
-            item.setData(
-                Qt.UserRole,
-                conversation["id"]
+            groups[section].append(
+                conversation
             )
 
+        order = [
 
-            item.setData(
-                Qt.UserRole + 1,
-                conversation.get(
-                    "pinned",
-                    False
-                )
+            "Today",
+
+            "Yesterday",
+
+            "Previous 7 Days",
+
+            "Previous 30 Days",
+
+            "Older"
+
+        ]
+
+        for section in order:
+
+            chats = groups.get(section)
+
+            if not chats:
+
+                continue
+
+            header = QListWidgetItem(section)
+
+            header.setFlags(
+                Qt.NoItemFlags
             )
 
-
-            item.setData(
-                Qt.UserRole + 2,
-                conversation.get(
-                    "folder",
-                    "General"
-                )
+            header.setForeground(
+                Qt.gray
             )
-
 
             self.chat_list.addItem(
-                item
+                header
             )
 
+            for conversation in chats:
 
+                title = conversation["title"]
 
-    # =====================================================
+                if conversation.get(
+                    "pinned",
+                    False
+                ):
+                    title = "📌 " + title
+
+                item = QListWidgetItem(
+                    title
+                )
+
+                item.setData(
+                    Qt.UserRole,
+                    conversation["id"]
+                )
+
+                self.chat_list.addItem(
+                    item
+                )
+
+                if conversation["id"] == current_id:
+
+                    self.chat_list.setCurrentItem(
+                        item
+                    )
+
+        active = (
+            conversation_service
+            .get_active_conversation()
+        )
+
+        if active:
+
+            self.select_conversation(
+                active.id
+            )
+
+        # =====================================================
     # Search
     # =====================================================
-
 
     def search_conversations(
         self,
         text
     ):
 
+        if not text.strip():
+
+            self.refresh()
+            return
 
         self.chat_list.clear()
 
-
         results = (
-            conversation_service
-            .search_conversations(
+            conversation_service.search_conversations(
                 text
             )
         )
 
-
         for conversation in results:
 
-
             title = conversation["title"]
-
 
             if conversation.get(
                 "pinned",
                 False
             ):
-
                 title = "📌 " + title
-
-
 
             item = QListWidgetItem(
                 title
             )
-
 
             item.setData(
                 Qt.UserRole,
                 conversation["id"]
             )
 
-
             self.chat_list.addItem(
                 item
             )
-
 
 
     # =====================================================
     # Context Menu
     # =====================================================
 
-
     def show_context_menu(
         self,
         position
     ):
 
-
-        item = self.chat_list.itemAt(
-            position
-        )
-
+        item = self.chat_list.itemAt(position)
 
         if not item:
-
             return
-
-
 
         conversation_id = item.data(
             Qt.UserRole
         )
 
+        if conversation_id is None:
+            return
 
-        pinned = item.data(
-            Qt.UserRole + 1
+        conversation = (
+            conversation_service.store.load(
+                conversation_id
+            )
         )
 
+        if conversation is None:
+            return
 
-
-        menu = QMenu(
-            self
-        )
-
+        menu = QMenu(self)
 
         rename_action = menu.addAction(
-            "Rename"
+            "✏ Rename"
         )
 
-
-        if pinned:
+        if conversation.pinned:
 
             pin_action = menu.addAction(
-                "Unpin"
+                "📍 Unpin"
             )
 
         else:
 
             pin_action = menu.addAction(
-                "Pin"
+                "📌 Pin"
             )
 
-
-        folder_action = menu.addAction(
-            "Move Folder"
-        )
-
-
         delete_action = menu.addAction(
-            "Delete"
+            "🗑 Delete"
         )
-
-
 
         action = menu.exec(
             self.chat_list.mapToGlobal(
@@ -325,66 +323,39 @@ class ConversationSidebar(QWidget):
             )
         )
 
-
-
         if action == rename_action:
 
-            self.rename_chat(
-                item
-            )
-
+            self.rename_chat(item)
 
         elif action == pin_action:
 
+            conversation.pinned = (
+                not conversation.pinned
+            )
 
-            if pinned:
-
-                conversation_service.unpin_conversation(
-                    conversation_id
-                )
-
-            else:
-
-                conversation_service.pin_conversation(
-                    conversation_id
-                )
-
+            conversation_service.store.save(
+                conversation
+            )
 
             self.refresh()
 
-
-
-        elif action == folder_action:
-
-            self.change_folder(
-                conversation_id
-            )
-
-
-
         elif action == delete_action:
 
-            self.delete_chat(
-                item
-            )
-
+            self.delete_chat(item)
 
 
     # =====================================================
     # Rename
     # =====================================================
 
-
     def rename_chat(
         self,
         item
     ):
 
-
         conversation_id = item.data(
             Qt.UserRole
         )
-
 
         title, ok = QInputDialog.getText(
 
@@ -401,9 +372,7 @@ class ConversationSidebar(QWidget):
 
         )
 
-
         if ok and title.strip():
-
 
             conversation_service.rename_conversation(
 
@@ -413,64 +382,21 @@ class ConversationSidebar(QWidget):
 
             )
 
-
             self.refresh()
-
-
-
-    # =====================================================
-    # Folder
-    # =====================================================
-
-
-    def change_folder(
-        self,
-        conversation_id
-    ):
-
-
-        folder, ok = QInputDialog.getText(
-
-            self,
-
-            "Folder",
-
-            "Folder name:"
-
-        )
-
-
-        if ok and folder.strip():
-
-
-            conversation_service.move_to_folder(
-
-                conversation_id,
-
-                folder.strip()
-
-            )
-
-
-            self.refresh()
-
 
 
     # =====================================================
     # Delete
     # =====================================================
 
-
     def delete_chat(
         self,
         item
     ):
 
-
         conversation_id = item.data(
             Qt.UserRole
         )
-
 
         reply = QMessageBox.question(
 
@@ -482,80 +408,61 @@ class ConversationSidebar(QWidget):
 
         )
 
-
         if reply == QMessageBox.Yes:
 
-
             conversation_service.delete_conversation(
-
                 conversation_id
-
             )
-
 
             self.conversation_deleted.emit(
-
                 conversation_id
-
             )
 
-
             self.refresh()
-
 
 
     # =====================================================
     # New Chat
     # =====================================================
 
-
     def create_new_chat(self):
-
 
         conversation = (
             conversation_service.new_conversation()
         )
 
-
         self.refresh()
-
 
         self.select_conversation(
             conversation.id
         )
-
 
         self.conversation_selected.emit(
             conversation.id
         )
 
 
-
     # =====================================================
     # Select
     # =====================================================
-
 
     def select_conversation(
         self,
         conversation_id
     ):
 
-
         for i in range(
             self.chat_list.count()
         ):
 
+            item = self.chat_list.item(i)
 
-            item = self.chat_list.item(
-                i
-            )
-
+            if item.flags() == Qt.NoItemFlags:
+                continue
 
             if item.data(
                 Qt.UserRole
             ) == conversation_id:
-
 
                 self.chat_list.setCurrentItem(
                     item
@@ -564,22 +471,21 @@ class ConversationSidebar(QWidget):
                 break
 
 
-
     # =====================================================
     # Click
     # =====================================================
-
 
     def on_chat_selected(
         self,
         item
     ):
 
-
         conversation_id = item.data(
             Qt.UserRole
         )
 
+        if conversation_id is None:
+            return
 
         self.conversation_selected.emit(
             conversation_id
