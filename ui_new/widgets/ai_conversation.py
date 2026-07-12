@@ -346,6 +346,10 @@ class AIConversationWidget(QWidget):
             0,
             self.input_box.setFocus
         )
+        QTimer.singleShot(
+    100,
+    self.input_box.setFocus
+)
 
 
 

@@ -1,20 +1,20 @@
 """
 Athena AI - Report Agent
 
-Flow:
+Flow
+
 Dispatcher
     ↓
 Report Agent
     ↓
-Chat Agent (Gemini/OpenAI/Ollama)
+Chat Agent
     ↓
 Report Generator
-    ↓
-DOCX Report
 """
 
 import re
 
+from models.chat_request import ChatRequest
 from agents.chat_agent import chat
 from formatter.report_generator import create_report
 
@@ -53,20 +53,24 @@ Include:
 ## Conclusion
 """
 
-    content = chat(user_name, prompt)
+    request = ChatRequest(
+        user_name=user_name,
+        message=prompt,
+        conversation_id=None,
+        file_path=None,
+    )
+
+    content = chat(request)
 
     filename = create_report(topic, content)
 
     return (
-        f"✅ Report generated successfully!\n\n"
+        "✅ Report generated successfully!\n\n"
         f"Saved to:\n{filename}"
     )
 
 
 def extract_topic(message: str) -> str:
-    """
-    Extract report topic from user request.
-    """
 
     message = message.lower().strip()
 

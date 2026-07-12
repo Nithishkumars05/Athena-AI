@@ -634,3 +634,35 @@ httpx.ConnectError: [Errno 11001] getaddrinfo failed
 2026-07-12 11:50:19 | INFO | ============================================================
 2026-07-12 11:50:19 | INFO | Athena AI started successfully.
 2026-07-12 11:50:19 | INFO | ============================================================
+2026-07-12 15:02:08 | INFO | ============================================================
+2026-07-12 15:02:08 | INFO | Athena AI started successfully.
+2026-07-12 15:02:08 | INFO | ============================================================
+2026-07-12 15:02:35 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 15:02:35 | INFO | Chat request started
+2026-07-12 15:02:35 | ERROR | Chat request failed
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\services\workers\chat_worker.py", line 43, in run
+    for chunk in dispatcher.stream_handle(self.request):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\agents\dispatcher.py", line 73, in stream_handle
+    yield report_handle(
+          ~~~~~~~~~~~~~^
+        request.user_name,
+        ^^^^^^^^^^^^^^^^^^
+        request.message
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "E:\Project\AI Engineer\agents\report_agent.py", line 56, in handle
+    content = chat(user_name, prompt)
+TypeError: chat() takes 1 positional argument but 2 were given
+2026-07-12 15:07:17 | INFO | ============================================================
+2026-07-12 15:07:17 | INFO | Athena AI started successfully.
+2026-07-12 15:07:17 | INFO | ============================================================
+2026-07-12 15:07:33 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 15:07:33 | INFO | Chat request started
+2026-07-12 15:07:33 | INFO | Task detected | CHAT | Reason=Default
+2026-07-12 15:07:33 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 15:07:33 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 15:07:49 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 15:07:49 | INFO | Streaming chat completed
