@@ -1,0 +1,29 @@
+{
+    "id": "29f568a4-c81e-4cff-874b-7e38a690e21b",
+    "title": "Hello",
+    "created_at": "2026-07-12T11:45:30.537975",
+    "updated_at": "2026-07-12T11:45:39.024977",
+    "messages": [
+        {
+            "role": "User",
+            "content": "hello"
+        },
+        {
+            "role": "User",
+            "content": "hello"
+        },
+        {
+            "role": "Athena",
+            "content": "Hello there! I'm Athena, your AI Engineering Assistant. It's a pleasure to meet you.\n\nHow can I assist you today with your engineering tasks or questions? Feel free to ask me anything!"
+        },
+        {
+            "role": "Athena",
+            "content": "Hello there! I'm Athena, your AI Engineering Assistant. It's a pleasure to meet you.\n\nHow can I assist you today with your engineering tasks or questions? Feel free to ask me anything!"
+        }
+    ],
+    "pinned": false,
+    "folder": "General",
+    "archived": false,
+    "deleted": false,
+    "tags": []
+}

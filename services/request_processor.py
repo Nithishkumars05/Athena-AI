@@ -23,7 +23,7 @@ from services.file_service import file_service
 from services.prompt_builders.chat_prompt_builder import (
     chat_prompt_builder,
 )
-
+from models.ai_context import AIContext
 from services.prompt_builders.document_prompt_builder import (
     document_prompt_builder,
 )
@@ -83,10 +83,14 @@ class RequestProcessor:
                 print("=" * 60)
 
 
+                context = AIContext(
+                system_prompt="",
+                user_message=request.message,
+)
+
                 prompt = chat_prompt_builder.build(
-                    user_name=request.user_name,
-                    message=request.message,
-                )
+    context
+)
 
 
             # ------------------------------

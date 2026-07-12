@@ -94,19 +94,5 @@
         "id": "c5dada9d-4cb4-45d3-9f7e-f417dffc53ae",
         "title": "Helloo",
         "updated_at": "2026-07-11T21:54:07.153756"
-    },
-    {
-        "id": "dcd8d2af-7734-4680-a515-67c8fc165ef5",
-        "title": "Hello",
-        "updated_at": "2026-07-11T22:11:15.987245",
-        "pinned": false,
-        "folder": "General"
-    },
-    {
-        "id": "dcd8d2af-7734-4680-a515-67c8fc165ef5",
-        "title": "New Chat",
-        "updated_at": "2026-07-11T22:11:07.364345",
-        "pinned": false,
-        "folder": "General"
     }
 ]
