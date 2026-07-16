@@ -1,5 +1,6 @@
 """
 Athena AI - Math Agent
+
 Offline mathematical reasoning using SymPy.
 """
 
@@ -13,7 +14,7 @@ from sympy import (
     integrate,
     factor,
     expand,
-    Eq
+    Eq,
 )
 
 from sympy.parsing.sympy_parser import (
@@ -22,7 +23,6 @@ from sympy.parsing.sympy_parser import (
     implicit_multiplication_application,
 )
 
-# Default variable
 x = symbols("x")
 
 transformations = (
@@ -31,68 +31,91 @@ transformations = (
 )
 
 
+# --------------------------------------------------
+# Preprocessing
+# --------------------------------------------------
+
 def preprocess_expression(expression: str) -> str:
-    """
-    Convert user-friendly math into SymPy-compatible syntax.
-    """
 
-    expression = expression.strip().lower()
+    expression = expression.lower().strip()
 
-    # Remove common command words
-    for word in [
+    words = [
+
         "solve",
         "calculate",
         "find",
         "evaluate",
         "equation",
-    ]:
+        "what is",
+        "compute",
+        "differentiate",
+        "derivative of",
+        "integrate",
+        "factor",
+        "expand",
+
+    ]
+
+    for word in words:
         expression = expression.replace(word, "")
 
     expression = expression.strip()
 
-    # Unicode powers
+    expression = expression.replace("^", "**")
     expression = expression.replace("²", "**2")
     expression = expression.replace("³", "**3")
-
-    # Allow ^
-    expression = expression.replace("^", "**")
 
     return expression
 
 
+# --------------------------------------------------
+# Parser
+# --------------------------------------------------
+
 def parse_math(expression: str):
+
     expression = preprocess_expression(expression)
 
     if "=" in expression:
+
         left, right = expression.split("=", 1)
 
-        left_expr = parse_expr(
-            left,
-            transformations=transformations
-        )
+        return Eq(
 
-        right_expr = parse_expr(
-            right,
-            transformations=transformations
-        )
+            parse_expr(
+                left,
+                transformations=transformations,
+            ),
 
-        return Eq(left_expr, right_expr)
+            parse_expr(
+                right,
+                transformations=transformations,
+            ),
+
+        )
 
     return parse_expr(
+
         expression,
-        transformations=transformations
+
+        transformations=transformations,
+
     )
 
 
+# --------------------------------------------------
+# Operations
+# --------------------------------------------------
+
 def solve_equation(expression: str):
-    print("DEBUG:", expression)
 
     expr = parse_math(expression)
 
-    if isinstance(expr, Eq):
-        result = solve(expr, x)
-    else:
-        result = solve(expr, x)
+    # Pure arithmetic
+    if not isinstance(expr, Eq) and len(expr.free_symbols) == 0:
+        return f"Answer: {expr.evalf()}"
+
+    result = solve(expr, x)
 
     if not result:
         return "No solution found."
@@ -101,45 +124,103 @@ def solve_equation(expression: str):
 
 
 def simplify_expression(expression: str):
-    expr = parse_math(expression)
-    return simplify(expr)
+
+    return str(
+        simplify(
+            parse_math(expression)
+        )
+    )
 
 
 def differentiate_expression(expression: str):
-    expr = parse_math(expression)
-    return diff(expr, x)
+
+    return str(
+        diff(
+            parse_math(expression),
+            x,
+        )
+    )
 
 
 def integrate_expression(expression: str):
-    expr = parse_math(expression)
-    return integrate(expr, x)
+
+    return str(
+        integrate(
+            parse_math(expression),
+            x,
+        )
+    )
 
 
 def factor_expression(expression: str):
-    expr = parse_math(expression)
-    return factor(expr)
+
+    return str(
+        factor(
+            parse_math(expression)
+        )
+    )
 
 
 def expand_expression(expression: str):
-    expr = parse_math(expression)
-    return expand(expr)
 
-def handle(user_name: str, message: str) -> str:
+    return str(
+        expand(
+            parse_math(expression)
+        )
+    )
+
+
+# --------------------------------------------------
+# Dispatcher
+# --------------------------------------------------
+
+def handle(
+    user_name: str,
+    message: str,
+) -> str:
+
+    text = message.lower()
+
+    if "differentiate" in text or "derivative" in text:
+        return differentiate_expression(message)
+
+    if "integrate" in text:
+        return integrate_expression(message)
+
+    if "factor" in text:
+        return factor_expression(message)
+
+    if "expand" in text:
+        return expand_expression(message)
+
+    if "simplify" in text:
+        return simplify_expression(message)
+
     return solve_equation(message)
 
 
 if __name__ == "__main__":
 
-    print(solve_equation("Solve x² + 5x + 6 = 0"))
+    tests = [
 
-    print(solve_equation("2x + 5 = 9"))
+        "Calculate 25*87",
 
-    print(simplify_expression("(x**2-1)/(x-1)"))
+        "Solve x^2+5x+6=0",
 
-    print(differentiate_expression("x^3 + 4x"))
+        "Differentiate x^3+4x",
 
-    print(integrate_expression("x²"))
+        "Integrate x^2",
 
-    print(factor_expression("x²+5x+6"))
+        "Factor x^2+5x+6",
 
-    print(expand_expression("(x+2)^3"))
+        "Expand (x+2)^3",
+
+    ]
+
+    for test in tests:
+
+        print(test)
+
+        print(handle("User", test))
+
+        print()

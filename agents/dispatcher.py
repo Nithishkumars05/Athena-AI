@@ -13,7 +13,7 @@ from agents.chat_agent import (
 
 from agents.math_agent import handle as math_handle
 from agents.report_agent import handle as report_handle
-
+from agents.python_agent import handle as python_handle
 
 class Dispatcher:
 
@@ -38,6 +38,11 @@ class Dispatcher:
                 request.user_name,
                 request.message
             )
+        # -----------------------------
+# Python
+# -----------------------------
+        if intent == "python":
+            return python_handle(request)
 
         # -----------------------------
         # Documents
@@ -74,6 +79,12 @@ class Dispatcher:
                 request.user_name,
                 request.message
             )
+            return
+        # -----------------------------
+# Python
+# -----------------------------
+        if intent == "python":
+            yield python_handle(request)
             return
 
         # -----------------------------

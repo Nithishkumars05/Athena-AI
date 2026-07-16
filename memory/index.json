@@ -59,14 +59,14 @@
     {
         "id": "dc5619d7-2541-4762-8893-6a813f547421",
         "title": "Explain This Image",
-        "updated_at": "2026-07-11T22:08:51.984109",
+        "updated_at": "2026-07-16T15:24:43.220018",
         "pinned": true,
         "folder": "General"
     },
     {
         "id": "5ac9d066-04b1-4f14-b300-e492d20e9fb0",
         "title": "New Chat",
-        "updated_at": "2026-07-12T15:07:49.751060",
+        "updated_at": "2026-07-12T16:20:46.765117",
         "pinned": true,
         "folder": "General"
     },
@@ -94,5 +94,54 @@
         "id": "c5dada9d-4cb4-45d3-9f7e-f417dffc53ae",
         "title": "Helloo",
         "updated_at": "2026-07-11T21:54:07.153756"
+    },
+    {
+        "id": "670cc7ac-5d3e-45d4-b597-def14e6f1d13",
+        "title": "Generate Me A Report On",
+        "updated_at": "2026-07-12T16:23:45.081577",
+        "pinned": false,
+        "folder": "General"
+    },
+    {
+        "id": "d942dfc3-135e-49c7-8760-ef825ff0e246",
+        "title": "Generate A Document With Mathematical",
+        "updated_at": "2026-07-12T16:26:34.547091",
+        "pinned": false,
+        "folder": "General"
+    },
+    {
+        "id": "cfd095af-40e5-4ae6-9e45-7e287290c7db",
+        "title": "Generate Me A Report On",
+        "updated_at": "2026-07-12T16:55:59.488254",
+        "pinned": false,
+        "folder": "General"
+    },
+    {
+        "id": "c88baf29-84a4-4442-ab65-6b027ab14282",
+        "title": "Generate Me A Report On",
+        "updated_at": "2026-07-14T21:57:55.723642",
+        "pinned": false,
+        "folder": "General"
+    },
+    {
+        "id": "3b2d5a73-d255-4964-8ea3-76f00f017076",
+        "title": "Generate Me A Report On",
+        "updated_at": "2026-07-16T12:17:12.302561",
+        "pinned": false,
+        "folder": "General"
+    },
+    {
+        "id": "511337f6-0bc5-4ff1-8bdf-0e54938596b7",
+        "title": "Hai",
+        "updated_at": "2026-07-16T12:36:09.193758",
+        "pinned": false,
+        "folder": "General"
+    },
+    {
+        "id": "3b2bc60a-40fb-46fe-b54a-0407763023c4",
+        "title": "Hii",
+        "updated_at": "2026-07-16T14:55:01.982648",
+        "pinned": false,
+        "folder": "General"
     }
 ]

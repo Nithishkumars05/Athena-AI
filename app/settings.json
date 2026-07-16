@@ -1,6 +1,6 @@
 {
-    "ai_mode": "cloud",
-    "model": "gemini-2.5-flash",
+    "ai_mode": "offline",
+    "model": "llava:latest",
     "temperature": 0.53,
     "history": 30
 }

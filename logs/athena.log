@@ -666,3 +666,357 @@ TypeError: chat() takes 1 positional argument but 2 were given
 2026-07-12 15:07:33 | INFO | Generation started | Model=gemini-2.5-flash
 2026-07-12 15:07:49 | INFO | Generation completed | Model=gemini-2.5-flash
 2026-07-12 15:07:49 | INFO | Streaming chat completed
+2026-07-12 15:15:52 | INFO | Task detected | CODING | Keyword='code'
+2026-07-12 15:15:52 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 15:15:52 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 15:15:55 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 16:03:31 | INFO | ============================================================
+2026-07-12 16:03:31 | INFO | Athena AI started successfully.
+2026-07-12 16:03:31 | INFO | ============================================================
+2026-07-12 16:03:36 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:03:36 | INFO | Chat request started
+2026-07-12 16:03:36 | ERROR | Chat request failed
+ValueError: Error from parse_expr with transformed code: "factorial (Symbol ('o' )*Symbol ('f' )*Integer (20 )*Symbol ('u' )*Symbol ('s' )*Symbol ('i' )*Symbol ('n' )*Symbol ('g' )*python )."
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\services\workers\chat_worker.py", line 43, in run
+    for chunk in dispatcher.stream_handle(self.request):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\agents\dispatcher.py", line 68, in stream_handle
+    yield math_handle(
+          ~~~~~~~~~~~^
+        request.user_name,
+        ^^^^^^^^^^^^^^^^^^
+        request.message
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "E:\Project\AI Engineer\agents\math_agent.py", line 128, in handle
+    return solve_equation(message)
+  File "E:\Project\AI Engineer\agents\math_agent.py", line 90, in solve_equation
+    expr = parse_math(expression)
+  File "E:\Project\AI Engineer\agents\math_agent.py", line 81, in parse_math
+    return parse_expr(
+        expression,
+        transformations=transformations
+    )
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\sympy\parsing\sympy_parser.py", line 1090, in parse_expr
+    raise e from ValueError(f"Error from parse_expr with transformed code: {code!r}")
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\sympy\parsing\sympy_parser.py", line 1081, in parse_expr
+    rv = eval_expr(code, local_dict, global_dict)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\sympy\parsing\sympy_parser.py", line 905, in eval_expr
+    expr = eval(
+        code, global_dict, local_dict)  # take local objects in preference
+  File "<string>", line 1
+    factorial (Symbol ('o' )*Symbol ('f' )*Integer (20 )*Symbol ('u' )*Symbol ('s' )*Symbol ('i' )*Symbol ('n' )*Symbol ('g' )*python ).
+SyntaxError: invalid syntax
+2026-07-12 16:06:09 | INFO | ============================================================
+2026-07-12 16:06:09 | INFO | Athena AI started successfully.
+2026-07-12 16:06:09 | INFO | ============================================================
+2026-07-12 16:06:13 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:06:13 | INFO | Chat request started
+2026-07-12 16:06:13 | INFO | Task detected | CODING | Keyword='code'
+2026-07-12 16:06:13 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:06:13 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 16:06:15 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 16:06:15 | INFO | Streaming chat completed
+2026-07-12 16:06:34 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:06:34 | INFO | Chat request started
+2026-07-12 16:06:34 | INFO | Streaming chat completed
+2026-07-12 16:07:39 | INFO | ============================================================
+2026-07-12 16:07:39 | INFO | Athena AI started successfully.
+2026-07-12 16:07:39 | INFO | ============================================================
+2026-07-12 16:07:50 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:07:50 | INFO | Chat request started
+2026-07-12 16:07:50 | INFO | Streaming chat completed
+2026-07-12 16:07:57 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:07:57 | INFO | Chat request started
+2026-07-12 16:07:57 | INFO | Streaming chat completed
+2026-07-12 16:08:04 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:08:04 | INFO | Chat request started
+2026-07-12 16:08:04 | INFO | Streaming chat completed
+2026-07-12 16:08:15 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:08:15 | INFO | Chat request started
+2026-07-12 16:08:15 | INFO | Streaming chat completed
+2026-07-12 16:08:34 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:08:34 | INFO | Chat request started
+2026-07-12 16:08:34 | INFO | Task detected | CHAT | Reason=Default
+2026-07-12 16:08:34 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:08:34 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 16:08:49 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 16:08:49 | INFO | Streaming chat completed
+2026-07-12 16:09:29 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:09:29 | INFO | Chat request started
+2026-07-12 16:09:29 | INFO | Task detected | CHAT | Reason=Default
+2026-07-12 16:09:29 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:09:29 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 16:09:55 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 16:09:55 | INFO | Streaming chat completed
+2026-07-12 16:20:27 | INFO | ============================================================
+2026-07-12 16:20:27 | INFO | Athena AI started successfully.
+2026-07-12 16:20:27 | INFO | ============================================================
+2026-07-12 16:20:37 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:20:37 | INFO | Chat request started
+2026-07-12 16:20:37 | INFO | Task detected | CHAT | Reason=Default
+2026-07-12 16:20:37 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:20:37 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 16:20:46 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 16:20:46 | INFO | Streaming chat completed
+2026-07-12 16:23:04 | INFO | ============================================================
+2026-07-12 16:23:04 | INFO | Athena AI started successfully.
+2026-07-12 16:23:04 | INFO | ============================================================
+2026-07-12 16:23:30 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:23:30 | INFO | Chat request started
+2026-07-12 16:23:30 | INFO | Task detected | CHAT | Reason=Default
+2026-07-12 16:23:30 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:23:30 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 16:23:45 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 16:23:45 | ERROR | Chat request failed
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\services\workers\chat_worker.py", line 43, in run
+    for chunk in dispatcher.stream_handle(self.request):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\agents\dispatcher.py", line 78, in stream_handle
+    yield report_handle(
+          ~~~~~~~~~~~~~^
+        request.user_name,
+        ^^^^^^^^^^^^^^^^^^
+        request.message
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "E:\Project\AI Engineer\agents\report_agent.py", line 65, in handle
+    filename = create_report(topic, content)
+  File "E:\Project\AI Engineer\formatter\report_generator.py", line 117, in create_report
+    add_text_with_equations(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        paragraph,
+        ^^^^^^^^^^
+        line
+        ^^^^
+    )
+    ^
+  File "E:\Project\AI Engineer\formatter\report_generator.py", line 151, in add_text_with_equations
+    add_equation(
+    ~~~~~~~~~~~~^
+        paragraph,
+        ^^^^^^^^^^
+        part
+        ^^^^
+    )
+    ^
+  File "E:\Project\AI Engineer\core\utils\equation_renderer.py", line 61, in add_equation
+    equation = latex_to_omml(
+        latex_expression
+    )
+  File "E:\Project\AI Engineer\core\utils\equation_renderer.py", line 24, in latex_to_omml
+    mathml = convert(latex_expression)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\latex2mathml\converter.py", line 615, in convert
+    return Converter(xmlns=xmlns, display=display).convert(latex, parent=parent)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\latex2mathml\converter.py", line 96, in convert
+    return self._convert(self.convert_to_element(latex, parent))
+                         ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\latex2mathml\converter.py", line 103, in convert_to_element
+    self._convert_group(iter(walk(latex, self.display, macros=self.macros)), row)
+                             ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\latex2mathml\walker.py", line 39, in walk
+    return _walk(tokens, block=block, macros={} if macros is None else macros)
+  File "E:\Project\AI Engineer\.venv\Lib\site-packages\latex2mathml\walker.py", line 497, in _walk
+    raise NoAvailableTokensError
+latex2mathml.exceptions.NoAvailableTokensError
+2026-07-12 16:25:38 | INFO | ============================================================
+2026-07-12 16:25:38 | INFO | Athena AI started successfully.
+2026-07-12 16:25:38 | INFO | ============================================================
+2026-07-12 16:25:55 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:25:55 | INFO | Chat request started
+2026-07-12 16:25:55 | INFO | Task detected | DOCUMENT | Keyword='document'
+2026-07-12 16:25:55 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:25:55 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-12 16:26:08 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-12 16:26:08 | INFO | Streaming chat completed
+2026-07-12 16:26:22 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:26:22 | INFO | Chat request started
+2026-07-12 16:26:22 | INFO | Task detected | CHAT | Reason=Default
+2026-07-12 16:26:22 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:26:22 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 16:26:34 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 16:26:34 | INFO | Streaming chat completed
+2026-07-12 16:35:20 | INFO | ============================================================
+2026-07-12 16:35:20 | INFO | Athena AI started successfully.
+2026-07-12 16:35:20 | INFO | ============================================================
+2026-07-12 16:35:42 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:35:42 | INFO | Chat request started
+2026-07-12 16:35:42 | INFO | Task detected | CHAT | Reason=Default
+2026-07-12 16:35:42 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:35:42 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 16:35:56 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 16:35:56 | INFO | Streaming chat completed
+2026-07-12 16:40:09 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:40:09 | INFO | Chat request started
+2026-07-12 16:40:09 | INFO | Task detected | CHAT | Reason=Default
+2026-07-12 16:40:09 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:40:09 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 16:40:27 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 16:40:27 | INFO | Streaming chat completed
+2026-07-12 16:53:58 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:53:58 | INFO | Chat request started
+2026-07-12 16:53:58 | INFO | Task detected | CHAT | Reason=Default
+2026-07-12 16:53:58 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:53:58 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 16:54:18 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 16:54:18 | INFO | Streaming chat completed
+2026-07-12 16:54:43 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:54:43 | INFO | Chat request started
+2026-07-12 16:54:43 | INFO | Task detected | CHAT | Reason=Default
+2026-07-12 16:54:43 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:54:43 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-12 16:55:08 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-12 16:55:08 | INFO | Streaming chat completed
+2026-07-12 16:55:10 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:55:10 | INFO | Chat request started
+2026-07-12 16:55:10 | INFO | Task detected | CHAT | Reason=Default
+2026-07-12 16:55:10 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:55:10 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 16:55:15 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 16:55:15 | INFO | Streaming chat completed
+2026-07-12 16:55:42 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-12 16:55:42 | INFO | Chat request started
+2026-07-12 16:55:42 | INFO | Task detected | CHAT | Reason=Default
+2026-07-12 16:55:42 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-12 16:55:42 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-12 16:55:59 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-12 16:55:59 | INFO | Streaming chat completed
+2026-07-14 21:32:26 | INFO | ============================================================
+2026-07-14 21:32:26 | INFO | Athena AI started successfully.
+2026-07-14 21:32:26 | INFO | ============================================================
+2026-07-14 21:32:47 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-14 21:32:47 | INFO | Chat request started
+2026-07-14 21:32:47 | INFO | Task detected | CHAT | Reason=Default
+2026-07-14 21:32:47 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-14 21:32:47 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-14 21:32:47 | WARNING | gemini-2.5-flash failed ([Errno 11001] getaddrinfo failed). Switching to qwen3:8b
+2026-07-14 21:35:08 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-14 21:35:08 | INFO | Streaming chat completed
+2026-07-14 21:36:11 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-14 21:36:11 | INFO | Chat request started
+2026-07-14 21:36:11 | INFO | Task detected | CHAT | Reason=Default
+2026-07-14 21:36:11 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-14 21:36:11 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-14 21:36:11 | WARNING | gemini-2.5-flash failed ([Errno 11001] getaddrinfo failed). Switching to qwen3:8b
+2026-07-14 21:39:21 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-14 21:39:21 | INFO | Streaming chat completed
+2026-07-14 21:40:56 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-14 21:40:56 | INFO | Chat request started
+2026-07-14 21:40:56 | INFO | Task detected | CODING | Keyword='code'
+2026-07-14 21:40:56 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-14 21:40:56 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-14 21:40:56 | WARNING | gemini-2.5-flash failed ([Errno 11001] getaddrinfo failed). Switching to qwen3:8b
+2026-07-14 21:51:15 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-14 21:51:45 | INFO | Streaming chat completed
+2026-07-14 21:56:24 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-14 21:56:24 | INFO | Chat request started
+2026-07-14 21:56:24 | INFO | Task detected | CHAT | Reason=Default
+2026-07-14 21:56:24 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-14 21:56:24 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-14 21:56:24 | WARNING | gemini-2.5-flash failed ([Errno 11001] getaddrinfo failed). Switching to qwen3:8b
+2026-07-14 21:57:55 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-14 21:57:55 | INFO | Streaming chat completed
+2026-07-16 12:12:16 | INFO | ============================================================
+2026-07-16 12:12:16 | INFO | Athena AI started successfully.
+2026-07-16 12:12:16 | INFO | ============================================================
+2026-07-16 12:14:18 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-16 12:14:18 | INFO | Chat request started
+2026-07-16 12:14:18 | INFO | Task detected | CHAT | Reason=Default
+2026-07-16 12:14:18 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-16 12:14:18 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-16 12:14:20 | WARNING | gemini-2.5-flash failed ([SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1082)). Switching to qwen3:8b
+2026-07-16 12:17:12 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-16 12:17:12 | INFO | Streaming chat completed
+2026-07-16 12:19:39 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-16 12:19:39 | INFO | Chat request started
+2026-07-16 12:19:39 | INFO | Task detected | CHAT | Reason=Default
+2026-07-16 12:19:39 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-16 12:19:39 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-16 12:20:10 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-16 12:20:10 | INFO | Streaming chat completed
+2026-07-16 12:20:32 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-16 12:20:32 | INFO | Chat request started
+2026-07-16 12:20:32 | INFO | Task detected | CHAT | Reason=Default
+2026-07-16 12:20:32 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-16 12:20:32 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-16 12:20:53 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-16 12:20:53 | INFO | Streaming chat completed
+2026-07-16 12:24:55 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-16 12:24:55 | INFO | Chat request started
+2026-07-16 12:24:55 | INFO | Task detected | CHAT | Reason=Default
+2026-07-16 12:24:55 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-16 12:24:55 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-16 12:25:15 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-16 12:25:15 | INFO | Streaming chat completed
+2026-07-16 12:32:13 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-16 12:32:13 | INFO | Chat request started
+2026-07-16 12:32:13 | INFO | Task detected | CHAT | Reason=Default
+2026-07-16 12:32:13 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-16 12:32:13 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-16 12:32:23 | WARNING | gemini-2.5-flash failed (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}). Switching to qwen3:8b
+2026-07-16 12:36:09 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-16 12:36:09 | INFO | Streaming chat completed
+2026-07-16 14:44:56 | INFO | ============================================================
+2026-07-16 14:44:56 | INFO | Athena AI started successfully.
+2026-07-16 14:44:56 | INFO | ============================================================
+2026-07-16 14:45:57 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-16 14:45:57 | INFO | Chat request started
+2026-07-16 14:45:57 | INFO | Task detected | CHAT | Reason=Default
+2026-07-16 14:45:57 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-16 14:45:57 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-16 14:46:09 | WARNING | gemini-2.5-flash failed ([Errno 11004] getaddrinfo failed). Switching to qwen3:8b
+2026-07-16 14:46:32 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-16 14:46:32 | INFO | Streaming chat completed
+2026-07-16 14:47:51 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-16 14:47:51 | INFO | Chat request started
+2026-07-16 14:47:51 | INFO | Task detected | CHAT | Reason=Default
+2026-07-16 14:47:51 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-16 14:47:51 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-16 14:48:16 | WARNING | gemini-2.5-flash failed ([SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1082)). Switching to qwen3:8b
+2026-07-16 14:50:00 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-16 14:50:00 | INFO | Streaming chat completed
+2026-07-16 14:52:11 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-16 14:52:11 | INFO | Chat request started
+2026-07-16 14:52:11 | INFO | Task detected | CODING | Keyword='code'
+2026-07-16 14:52:11 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-16 14:52:11 | INFO | Generation started | Model=gemini-2.5-flash
+2026-07-16 14:52:36 | WARNING | gemini-2.5-flash failed ([SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1082)). Switching to qwen3:8b
+2026-07-16 14:53:16 | INFO | Generation completed | Model=gemini-2.5-flash
+2026-07-16 14:53:16 | INFO | Streaming chat completed
+2026-07-16 14:54:10 | INFO | Request received | User=User | Streaming=True | File=False
+2026-07-16 14:54:10 | INFO | Chat request started
+2026-07-16 14:54:10 | INFO | Task detected | CHAT | Reason=Default
+2026-07-16 14:54:10 | INFO | Model selected | gemini-2.5-flash | Mode=Manual
+2026-07-16 14:54:10 | INFO | Streaming started | Model=gemini-2.5-flash
+2026-07-16 14:54:22 | WARNING | gemini-2.5-flash failed ([Errno 11001] getaddrinfo failed). Switching to qwen3:8b
+2026-07-16 14:55:01 | INFO | Streaming completed | Model=gemini-2.5-flash
+2026-07-16 14:55:01 | INFO | Streaming chat completed
+2026-07-16 15:24:43 | INFO | Request received | User=User | Streaming=True | File=True
+2026-07-16 15:24:43 | INFO | Chat request started
+2026-07-16 15:24:43 | ERROR | Chat request failed
+Traceback (most recent call last):
+  File "E:\Project\AI Engineer\services\workers\chat_worker.py", line 43, in run
+    for chunk in dispatcher.stream_handle(self.request):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "E:\Project\AI Engineer\agents\dispatcher.py", line 96, in stream_handle
+    yield from chat_stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 99, in stream_handle
+    yield from stream(request)
+  File "E:\Project\AI Engineer\agents\chat_agent.py", line 78, in stream
+    processed = request_processor.process(request)
+  File "E:\Project\AI Engineer\services\request_processor.py", line 91, in process
+                    prompt = chat_prompt_builder.build(
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        context
+        ^^^^^^^
+    )
+    ^
+TypeError: ChatPromptBuilder.build() missing 1 required positional argument: 'message'
